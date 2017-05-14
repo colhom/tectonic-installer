@@ -234,3 +234,21 @@ variable "tectonic_metal_master_gateway" {
 }
 
 ##########################
+
+## Custom CA Certificate
+
+variable "tectonic_metal_customcacertificate" {
+  type = "string"
+  description = <<EOF
+Custom CA Certificate to trust. File content must be indented. 
+Example: `tectonic_metal_customcacertificate = "company.pem"`
+`$ cat company.pem `
+```
+          -----BEGIN CERTIFICATE-----
+          MIIDYjCCAkoCCQC+x1L/jqcjFjANBgkqhkiG9w0BAQsFADBzMQswCQYDVQQGEwJV
+          ...
+          J6X6qAv5
+          -----END CERTIFICATE-----
+```
+EOF
+}

@@ -11,6 +11,17 @@ networkd:
         Gateway={{.coreos_network_gateway}}
 systemd:
   units:
+    - name: "update-ca-certificates.service"
+      dropins:
+        - name: 50-rehash-certs.conf
+          contents: |
+            [Unit]
+            ConditionPathIsSymbolicLink=
+
+            [Service]
+            ExecStart=
+            ExecStart=/usr/sbin/update-ca-certificates
+            Type=oneshot
     - name: docker.service
       enable: true
     - name: locksmithd.service
@@ -94,6 +105,14 @@ systemd:
 
 storage:
   files:
+    - path: /etc/ssl/certs/company.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: | 
+
+{{.custom_ca_certificate}}
+
     - path: /etc/kubernetes/.empty
       filesystem: root
       mode: 0644

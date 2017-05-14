@@ -47,6 +47,9 @@ resource "matchbox_group" "controller" {
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
     coreos_network_address = "${var.tectonic_metal_master_ip["${count.index}"]}"
     coreos_network_gateway = "${var.tectonic_metal_master_gateway}"
+
+    # custom CA Cert
+    custom_ca_certificate  = "${file(var.tectonic_metal_customcacertificate)}"
   }
 }
 
@@ -75,5 +78,8 @@ resource "matchbox_group" "worker" {
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
     coreos_network_address = "${var.tectonic_metal_worker_ip["${count.index}"]}"
     coreos_network_gateway = "${var.tectonic_metal_worker_gateway}"
+
+    # custom CA Cert
+    custom_ca_certificate  = "${file(var.tectonic_metal_customcacertificate)}"
   }
 }
