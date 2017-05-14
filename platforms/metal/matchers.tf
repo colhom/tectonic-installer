@@ -49,6 +49,19 @@ resource "matchbox_group" "controller" {
 
     rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
     rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+
+    # static IP
+    coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
+    coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_master_ip, count.index,"")}"
+    coreos_network_gateway = "${var.tectonic_metal_master_gateway}"
+
+    # custom CA Cert
+    coreos_custom_cacertificate = "${replace(var.tectonic_metal_customcacertificate,"\n","\\n")}"
+
+    # custom pause container image
+    pod_infra_image = "${var.tectonic_container_images["pod_infra_image"]}"
   }
 }
 
@@ -77,5 +90,18 @@ resource "matchbox_group" "worker" {
 
     rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
     rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+
+    # static IP
+    coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
+    coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_worker_ip, count.index, "")}"
+    coreos_network_gateway = "${var.tectonic_metal_worker_gateway}"
+
+    # custom CA Cert
+    coreos_custom_cacertificate = "${replace(var.tectonic_metal_customcacertificate,"\n","\\n")}"
+
+    # custom pause container image
+    pod_infra_image = "${var.tectonic_container_images["pod_infra_image"]}"
   }
 }

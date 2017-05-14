@@ -1,6 +1,31 @@
 ---
+networkd:
+  units:
+    {{if .coreos_static_ip}}
+    - name: 00-{{.coreos_network_adapter}}.network
+      contents: |
+        [Match]
+        Name={{.coreos_network_adapter}}
+        [Network]
+        DNS={{.coreos_network_dns}}
+        Address={{.coreos_network_address}}
+        Gateway={{.coreos_network_gateway}}
+    {{end}}
 systemd:
   units:
+    {{if .coreos_custom_cacertificate}}
+    - name: "update-ca-certificates.service"
+      dropins:
+        - name: 50-rehash-certs.conf
+          contents: |
+            [Unit]
+            ConditionPathIsSymbolicLink=
+
+            [Service]
+            ExecStart=
+            ExecStart=/usr/sbin/update-ca-certificates
+            Type=oneshot
+    {{end}}
     - name: etcd-member.service
       enable: {{.etcd_enabled}}
       dropins:
@@ -123,6 +148,13 @@ systemd:
 {{end}}
 storage:
   files:
+    {{if .coreos_custom_cacertificate}}
+    - path: /etc/ssl/certs/company.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: "{{.coreos_custom_cacertificate}}"
+    {{end}}
     - path: /etc/kubernetes/kubelet.env
       filesystem: root
       mode: 0644
