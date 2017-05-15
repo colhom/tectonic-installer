@@ -43,16 +43,17 @@ resource "matchbox_group" "controller" {
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
 
     # static IP
+    coreos_static_ip = "${var.tectonic_static_ip}"
     coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
-    coreos_network_address = "${var.tectonic_metal_master_ip["${count.index}"]}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_master_ip, count.index,"")}"
     coreos_network_gateway = "${var.tectonic_metal_master_gateway}"
 
     # custom CA Cert
-    custom_ca_certificate  = "${file(var.tectonic_metal_customcacertificate)}"
+    coreos_custom_cacertificate  = "${replace(var.tectonic_metal_customcacertificate,"\n","\\n")}"
 
     # custom pause container image
-    pod_infra_image   = "${var.container_images["pod_infra_image"]}"
+    pod_infra_image   = "${var.tectonic_container_images["pod_infra_image"]}"
   }
 }
 
@@ -77,16 +78,17 @@ resource "matchbox_group" "worker" {
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
 
     # static IP
+    coreos_static_ip = "${var.tectonic_static_ip}"
     coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
-    coreos_network_address = "${var.tectonic_metal_worker_ip["${count.index}"]}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_worker_ip, count.index, "")}"
     coreos_network_gateway = "${var.tectonic_metal_worker_gateway}"
 
     # custom CA Cert
-    custom_ca_certificate  = "${file(var.tectonic_metal_customcacertificate)}"
+    coreos_custom_cacertificate  = "${replace(var.tectonic_metal_customcacertificate,"\n","\\n")}"
 
     # custom pause container image
-    pod_infra_image    = "${var.container_images["pod_infra_image"]}"
+    pod_infra_image    = "${var.tectonic_container_images["pod_infra_image"]}"
 
   }
 }
