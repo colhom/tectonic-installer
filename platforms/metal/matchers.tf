@@ -42,7 +42,7 @@ resource "matchbox_group" "controller" {
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
 
-    # static IP 
+    # static IP
     coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
     coreos_network_address = "${var.tectonic_metal_master_ip["${count.index}"]}"
@@ -50,6 +50,9 @@ resource "matchbox_group" "controller" {
 
     # custom CA Cert
     custom_ca_certificate  = "${file(var.tectonic_metal_customcacertificate)}"
+
+    # custom pause container image
+    pod_infra_image   = "${var.container_images["pod_infra_image"]}"
   }
 }
 
@@ -73,7 +76,7 @@ resource "matchbox_group" "worker" {
     kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
 
-    # static IP 
+    # static IP
     coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
     coreos_network_address = "${var.tectonic_metal_worker_ip["${count.index}"]}"
@@ -81,5 +84,9 @@ resource "matchbox_group" "worker" {
 
     # custom CA Cert
     custom_ca_certificate  = "${file(var.tectonic_metal_customcacertificate)}"
+
+    # custom pause container image
+    pod_infra_image    = "${var.container_images["pod_infra_image"]}"
+
   }
 }
