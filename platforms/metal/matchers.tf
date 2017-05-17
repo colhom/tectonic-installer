@@ -39,6 +39,7 @@ resource "matchbox_group" "controller" {
 
     # extra data
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
+    etcd_image        = "${var.tectonic_container_images["etcd"]}"
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
 

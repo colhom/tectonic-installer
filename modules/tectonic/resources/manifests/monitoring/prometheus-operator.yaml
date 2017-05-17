@@ -19,6 +19,7 @@ spec:
          args:
          - "--kubelet-object=kube-system/kubelet"
          - "--config-reloader-image=${config_reload_image}"
+         - "--prometheus-config-reloader=${prometheus_config_reloader_image}"
          resources:
            requests:
              cpu: 100m
