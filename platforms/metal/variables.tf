@@ -189,18 +189,27 @@ EOF
 ## Static IP Variables
 ##########################
 
+variable "tectonic_static_ip" {
+  type = "string"
+  description = "configure static ip for nodes (any value other than empty string)"
+  default = ""
+}
+
 variable "tectonic_metal_networkadapter" {
   type = "string"
+  default = ""
   description = "Network Adapter Interface ex: eth0"
 }
 
 variable "tectonic_metal_dnsserver" {
   type = "string"
+  default = ""
   description = "DNS Server IP Address"
 }
 
 variable "tectonic_metal_worker_ip" {
   type = "map"
+  default = {}
   description = <<EOF
 Metal Worker IP Address
 
@@ -213,11 +222,13 @@ EOF
 
 variable "tectonic_metal_worker_gateway" {
   type = "string"
+  default = ""
   description = "Metal Master Gateway IP Address"
 }
 
 variable "tectonic_metal_master_ip" {
   type = "map"
+  default = {}
   description = <<EOF
 Metal Master IP Address
 
@@ -227,9 +238,9 @@ Example: `tectonic_metal_master_ip = {
 }`
 EOF
 }
-
 variable "tectonic_metal_master_gateway" {
   type = "string"
+  default = ""
   description = "Metal Master Gateway IP Address"
 }
 
@@ -239,6 +250,7 @@ variable "tectonic_metal_master_gateway" {
 
 variable "tectonic_metal_customcacertificate" {
   type = "string"
+  default = ""
   description = <<EOF
 Custom CA Certificate to trust. File content must be indented. 
 Example: `tectonic_metal_customcacertificate = "company.pem"`
@@ -252,3 +264,6 @@ Example: `tectonic_metal_customcacertificate = "company.pem"`
 ```
 EOF
 }
+
+
+#### Offline install ###

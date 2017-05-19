@@ -45,6 +45,7 @@ variable "tectonic_container_images" {
     awscli                          = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     kube_version                    = "quay.io/coreos/kube-version:0.1.0"
     busybox                         = "docker.io/library/busybox"
+    pod_infra_image                 = "gcr.io/google_containers/pause-amd64:3.0"
   }
 }
 
