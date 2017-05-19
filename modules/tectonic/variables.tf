@@ -118,6 +118,7 @@ variable "stats_url" {
   type        = "string"
 }
 
+
 variable "rkt_insecure_options" {
   description = "Comma-separted values to provide for --insecure-options rkt flag"
   type        = "string"
@@ -128,4 +129,12 @@ variable "rkt_image_protocol" {
   description = "Image protocol to use when fetching rkt images (eg: `docker://`)"
   type        = "string"
   default     = ""
+}
+
+variable "image_re" {
+  description = <<EOF
+(internal) Regular expression used to extract repo and tag components from image strings
+EOF
+
+  type = "string"
 }

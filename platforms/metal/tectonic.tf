@@ -83,6 +83,8 @@ module "tectonic" {
 
   rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
   rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
+
+  image_re = "${var.tectonic_image_re}"
 }
 
 data "archive_file" "assets" {

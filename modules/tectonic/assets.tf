@@ -89,6 +89,8 @@ resource "template_dir" "tectonic" {
     certificates_strategy    = "${var.ca_generated == "true" ? "installerGeneratedCA" : "userProvidedCA"}"
     identity_api_service     = "${var.identity_api_service}"
     tectonic_updater_enabled = "${var.experimental ? "true" : "false"}"
+
+    image_re = "${var.image_re}"
   }
 }
 
