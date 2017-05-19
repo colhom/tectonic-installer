@@ -11,6 +11,7 @@ resource "template_dir" "tectonic" {
   vars {
     addon_resizer_image                   = "${var.container_images["addon_resizer"]}"
     config_reload_image                   = "${var.container_images["config_reload"]}"
+    prometheus_config_reloader_image      = "${var.container_images["tectonic_prom_cfg_reloader"]}"
     console_image                         = "${var.container_images["console"]}"
     error_server_image                    = "${var.container_images["error_server"]}"
     heapster_image                        = "${var.container_images["heapster"]}"
@@ -21,6 +22,7 @@ resource "template_dir" "tectonic" {
     node_agent_image                      = "${var.container_images["node_agent"]}"
     node_exporter_image                   = "${var.container_images["node_exporter"]}"
     kube_state_metrics_image              = "${var.container_images["kube_state_metrics"]}"
+    prometheus_image                      = "${var.container_images["prometheus"]}"
     prometheus_operator_image             = "${var.container_images["prometheus_operator"]}"
     stats_emitter_image                   = "${var.container_images["stats_emitter"]}"
     stats_extender_image                  = "${var.container_images["stats_extender"]}"

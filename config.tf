@@ -25,7 +25,9 @@ variable "tectonic_container_images" {
     kube_version_operator           = "quay.io/coreos/kube-version-operator:v1.6.4-kvo.3"
     tectonic_channel_operator       = "quay.io/coreos/tectonic-channel-operator:0.3.4"
     node_agent                      = "quay.io/coreos/node-agent:787844277099e8c10d617c3c807244fc9f873e46"
+    prometheus                      = "quay.io/prometheus/prometheus:v1.6.1"
     prometheus_operator             = "quay.io/coreos/prometheus-operator:v0.9.1"
+    tectonic_prom_cfg_reloader      = "quay.io/coreos/prometheus-config-reloader:v0.0.1"
     tectonic_prometheus_operator    = "quay.io/coreos/tectonic-prometheus-operator:v1.2.0"
     node_exporter                   = "quay.io/prometheus/node-exporter:v0.14.0"
     kube_state_metrics              = "quay.io/coreos/kube-state-metrics:v0.5.0"
@@ -45,6 +47,8 @@ variable "tectonic_container_images" {
     kenc                            = "quay.io/coreos/kenc:48b6feceeee56c657ea9263f47b6ea091e8d3035"
     awscli                          = "quay.io/coreos/awscli:025a357f05242fdad6a81e8a6b520098aa65a600"
     kube_version                    = "quay.io/coreos/kube-version:0.1.0"
+    busybox                         = "docker.io/library/busybox:1.26"
+    pod_infra_image                 = "gcr.io/google_containers/pause-amd64:3.0"
   }
 }
 

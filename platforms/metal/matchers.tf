@@ -42,6 +42,9 @@ resource "matchbox_group" "controller" {
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+
+    # custom pause container image
+    pod_infra_image = "${var.container_images["pod_infra_image"]}"
   }
 }
 
@@ -64,5 +67,8 @@ resource "matchbox_group" "worker" {
     kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
+
+    # custom pause container image
+    pod_infra_image = "${var.container_images["pod_infra_image"]}"
   }
 }

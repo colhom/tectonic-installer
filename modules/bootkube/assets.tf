@@ -60,6 +60,9 @@ resource "template_dir" "bootkube" {
     kubednsmasq_image      = "${var.container_images["kubednsmasq"]}"
     kubedns_sidecar_image  = "${var.container_images["kubedns_sidecar"]}"
     flannel_image          = "${var.container_images["flannel"]}"
+    etcd_operator_image    = "${var.container_images["etcd_operator"]}"
+    kenc_image             = "${var.container_images["kenc"]}"
+    busybox_image          = "${var.container_images["busybox"]}"
 
     # Choose the etcd endpoints to use.
     # 1. If experimental mode is enabled (self-hosted etcd), then use
