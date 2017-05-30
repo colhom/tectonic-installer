@@ -317,8 +317,31 @@ If set to true, experimental Tectonic assets are being deployed.
 EOF
 }
 
+
 variable "tectonic_stats_url" {
   type        = "string"
   default     = "https://stats-collector.tectonic.com"
   description = "The Tectonic statistics collection URL to which to report."
+}
+
+variable "tectonic_rkt_image_protocol" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) Protocol rkt will use when pulling images from registry.
+
+Example: `docker://`
+EOF
+}
+
+variable "tectonic_rkt_insecure_options" {
+  type    = "string"
+  default = "none"
+
+  description = <<EOF
+(optional) Comma-separated list of insecure options for rkt.
+
+Example: `image,tls`
+EOF
 }
