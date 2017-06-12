@@ -46,3 +46,12 @@ variable "tectonic_service_disabled" {
 variable "cluster_name" {
   type = "string"
 }
+
+variable "image_re" {
+  description = <<EOF
+(internal) Regular expression used to extract repo and tag components from image strings
+EOF
+
+  type    = "string"
+  default = "/^([^/]+/[^/]+/[^/]+):(.*)$/"
+}

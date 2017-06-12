@@ -112,3 +112,12 @@ variable "master_count" {
   description = "The amount of master nodes present in the cluster."
   type        = "string"
 }
+
+variable "image_re" {
+  description = <<EOF
+(internal) Regular expression used to extract repo and tag components from image strings
+EOF
+
+  type    = "string"
+  default = "/^([^/]+/[^/]+/[^/]+):(.*)$/"
+}

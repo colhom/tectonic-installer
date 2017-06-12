@@ -23,7 +23,7 @@ spec:
         command:
         - "/bin/update-operator"
         - "-agent-image-repo"
-        - ${element(split(":",container_linux_update_operator_image),0)}
+        - ${container_linux_update_operator_repo}
         env:
         - name: POD_NAMESPACE
           valueFrom:

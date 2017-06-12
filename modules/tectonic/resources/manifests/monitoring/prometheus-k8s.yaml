@@ -13,7 +13,7 @@ spec:
   serviceMonitorSelector:
     matchExpression:
     - {key: k8s-app, operator: Exists}
-  baseImage: ${element(split(":",prometheus_image),0)}
+  baseImage: ${prometheus_repo}
   ruleSelector:
     matchLabels:
       role: prometheus-rulefiles
