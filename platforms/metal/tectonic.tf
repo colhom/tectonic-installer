@@ -80,6 +80,9 @@ module "tectonic" {
   experimental      = "${var.tectonic_experimental}"
   master_count      = "${length(var.tectonic_metal_controller_names)}"
   stats_url         = "${var.tectonic_stats_url}"
+
+  rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
+  rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
 }
 
 data "archive_file" "assets" {
