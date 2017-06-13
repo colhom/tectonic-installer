@@ -158,6 +158,42 @@ systemd:
         [Install]
         WantedBy=multi-user.target
 {{end}}
+{{ if .registry_cache_image }}
+    - name: tectonic-registry-cache.service
+      enable: true
+      contents: |
+        [Unit]
+        Description=Read-only cache of tectonic container images
+        Before=tectonic-registry-watcher.service
+        After=update-ca-certificates.service
+        [Service]
+        EnvironmentFile=/etc/tectonic/tectonic-registry-cache.env
+        ExecStartPre=-/usr/bin/rkt stop --uuid-file=/var/run/tectonic-registry-cache.uuid
+        ExecStartPre=-/usr/bin/rkt rm --uuid-file=/var/run/tectonic-registry-cache.uuid
+        ExecStart=/opt/bin/tectonic-registry-cache.sh
+        ExecStop=-/usr/bin/rkt stop --uuid-file=/var/run/tectonic-registry-cache.uuid
+        ExecStopPost=-/usr/bin/rkt rm --uuid-file=/var/run/tectonic-registry-cache.uuid
+        Restart=always
+        RestartSec=5
+        [Install]
+        WantedBy=multi-user.target
+    - name: tectonic-registry-watcher.service
+      enable: true
+      contents: |
+        [Unit]
+        Description=Check for availability of local read-only container image cache
+        Before=kubelet.service bootkube.service
+        After=tectonic-registry-cache.service
+        Requires=tectonic-registry-cache.service
+        [Service]
+        Type=oneshot
+        RemainAfterExit=true
+        ExecStart=/usr/bin/bash -c "while true;do curl http://localhost:5000 && exit 0; sleep 3;done"
+
+        [Install]
+        RequiredBy=kubelet.service bootkube.service
+        WantedBy=multi-user.target
+{{end}}
 storage:
   files:
     {{if .coreos_custom_cacertificate}}
@@ -185,6 +221,29 @@ storage:
       contents:
         inline: |
           fs.inotify.max_user_watches=16184
+    {{ if .registry_cache_image }}
+    - path: /opt/bin/tectonic-registry-cache.sh
+      filesystem: root
+      mode: 0744
+      contents:
+        inline: |
+          #!/bin/bash -e
+          /usr/bin/rkt run \
+          --uuid-file-save=/var/run/tectonic-registry-cache.uuid \
+          --trust-keys-from-https \
+          --insecure-options={{.registry_cache_rkt_insecure_options}} \
+          {{.registry_cache_rkt_protocol}}${REGISTRY_REPO}:${REGISTRY_TAG} \
+          --net=host \
+          --dns=host
+
+    - path: /etc/tectonic/tectonic-registry-cache.env
+      filesystem: root
+      contents:
+        inline: |
+          REGISTRY_REPO={{.registry_cache_repo}}
+          REGISTRY_TAG={{.registry_cache_tag}}
+    {{end}}
+
 passwd:
   users:
     - name: core
