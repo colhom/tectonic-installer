@@ -333,3 +333,30 @@ variable "tectonic_rkt_insecure_options" {
 Example: `image,tls`
 EOF
 }
+
+variable "tectonic_registry_cache_image" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) image string to pull tectonic registry cache image from. Leave blank to disable
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_protocol" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(optional) rkt image protocol string to pull tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_insecure_options" {
+  type    = "string"
+  default = "none"
+
+  description = <<EOF
+(optional) rkt insecure options to set when pulling tectonic registry cache image.
+EOF
+}
