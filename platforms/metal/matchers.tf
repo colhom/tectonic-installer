@@ -75,6 +75,12 @@ resource "matchbox_group" "controller" {
 
     # custom pause container image
     pod_infra_image = "${var.tectonic_container_images["pod_infra_image"]}"
+
+    registry_cache_image                = "${var.tectonic_registry_cache_image}"
+    registry_cache_repo                 = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$1")}"
+    registry_cache_tag                  = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$2")}"
+    registry_cache_rkt_protocol         = "${var.tectonic_registry_cache_rkt_protocol}"
+    registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
   }
 }
 
@@ -118,5 +124,11 @@ resource "matchbox_group" "worker" {
 
     # custom pause container image
     pod_infra_image = "${var.tectonic_container_images["pod_infra_image"]}"
+
+    registry_cache_image                = "${var.tectonic_registry_cache_image}"
+    registry_cache_repo                 = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$1")}"
+    registry_cache_tag                  = "${replace(var.tectonic_registry_cache_image, var.tectonic_image_re, "$2")}"
+    registry_cache_rkt_protocol         = "${var.tectonic_registry_cache_rkt_protocol}"
+    registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
   }
 }
