@@ -23,9 +23,13 @@ This document gives an overview of variables used in all platforms of the Tecton
 | tectonic_etcd_count | The number of etcd nodes to be created. If set to zero, the count of etcd nodes will be determined automatically.<br><br>Note: This is currently only supported on AWS. | string | `0` |
 | tectonic_etcd_servers | (optional) List of external etcd v3 servers to connect with (hostnames/IPs only). Needs to be set if using an external etcd cluster.<br><br>Example: `["etcd1", "etcd2", "etcd3"]` | list | `<list>` |
 | tectonic_experimental | If set to true, experimental Tectonic assets are being deployed. | string | `false` |
+| tectonic_image_re | (internal) Regular expression used to extract repo and tag components | string | `/^([^/]+/[^/]+/[^/]+):(.*)$/` |
 | tectonic_license_path | The path to the tectonic licence file.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
 | tectonic_master_count | The number of master nodes to be created. This applies only to cloud platforms. | string | `1` |
 | tectonic_pull_secret_path | The path the pull secret file in JSON format.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
+| tectonic_registry_cache_image | (optional) image string to pull tectonic registry cache image from. Leave blank to disable | string | `` |
+| tectonic_registry_cache_rkt_insecure_options | (optional) rkt insecure options to set when pulling tectonic registry cache image. | string | `none` |
+| tectonic_registry_cache_rkt_protocol | (optional) rkt image protocol string to pull tectonic registry cache image. | string | `` |
 | tectonic_rkt_image_protocol | (optional) Protocol rkt will use when pulling images from registry.<br><br>Example: `docker://` | string | `` |
 | tectonic_rkt_insecure_options | (optional) Comma-separated list of insecure options for rkt.<br><br>Example: `image,tls` | string | `none` |
 | tectonic_service_cidr | This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. | string | `10.3.0.0/16` |

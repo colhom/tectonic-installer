@@ -144,6 +144,15 @@ tectonic_master_count = "1"
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
+// (optional) image string to pull tectonic registry cache image from. Leave blank to disable
+// tectonic_registry_cache_image = ""
+
+// (optional) rkt insecure options to set when pulling tectonic registry cache image.
+// tectonic_registry_cache_rkt_insecure_options = "none"
+
+// (optional) rkt image protocol string to pull tectonic registry cache image.
+// tectonic_registry_cache_rkt_protocol = ""
+
 // (optional) Protocol rkt will use when pulling images from registry.
 // 
 // Example: `docker://`
