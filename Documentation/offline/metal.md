@@ -2,14 +2,13 @@
 
 **NOTE: as of tectonic version 1.6.4, you will need to use a [special tectonic installer branch](https://github.com/colhom/tectonic-installer/tree/1.6.4-tectonic.X-offline) in order to use this functionality**
 
-The offline instructions will allow installation of Tectonic in an offline network environment (no outgoing internet access). This guide is meant as a supplement to the upstream [tectonic terraform baremetal docs](https://coreos.com/tectonic/docs/latest/install/bare-metal/metal-terraform.html).
+The offline instructions will allow installation of Tectonic in an offline network environment (no outgoing internet access). This guide is meant as a supplement to the [tectonic terraform baremetal docs](https://coreos.com/tectonic/docs/latest/install/bare-metal/metal-terraform.html).
 
 * Follow that guide up to the `terraform plan` step, stopping prior.
 
 * Then follow this guide. You'll find that most of this has to do with either matchbox or exister container registry infrastructure.
 
-* Finally resume the regular installation instructions by execting `terraform plan` and `terraform apply`.
-
+* Finally resume the terraform baremetal installation instructions by executing the `terraform plan` and `terraform apply`.
 
 ## Requirements
 
@@ -29,6 +28,10 @@ The offline instructions will allow installation of Tectonic in an offline netwo
 **This is only necessary in environments where the server hosting matchbox does not have outgoing internet access. This does greatly reduce install time, so it is highly recommended.**
 
 Examine your `terraform.tfvars` file and note values for `tectonic_metal_cl_version` and `tectonic_cl_channel`. Ensure that `/var/lib/matchbox` is pre-populated with the correct images via instructions [here](https://coreos.com/matchbox/docs/latest/deployment.html#download-coreos-optional)
+
+### Provide organizational CA certificate bundle to terraform installer
+
+Paste the contents of your organizational CA certificate into `tectonic_metal_customcacertificate` in your `terraform.tfvars` file. When the Tectonic Kubernetes nodes come up, this certificate will be added to the system CA bundle.
 
 ### Sync tectonic registry cache to your local image repository
 
@@ -93,5 +96,5 @@ tectonic_registry_cache_rkt_protocol="docker://"
 tectonic_registry_cache_rkt_insecure_options="image"
 ```
 
-If your existing container repository DOES NOT have TLS enabled, you should also include `tectonic_registry_cache_rkt_insecure_options="http"` as well.
+If your existing container repository DOES NOT have TLS enabled, you should also include `tectonic_registry_cache_rkt_insecure_options="http,image"` as well.
 
