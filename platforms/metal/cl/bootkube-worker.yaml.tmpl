@@ -2,10 +2,14 @@
 networkd:
   units:
     {{if .coreos_static_ip}}
-    - name: 00-{{.coreos_network_adapter}}.network
+    - name: 00-tectonic.network
       contents: |
         [Match]
+        {{if .coreos_network_adapter}}
         Name={{.coreos_network_adapter}}
+        {{else}}
+        MACAddress={{.coreos_mac_address}}
+        {{end}}
         [Network]
         DNS={{.coreos_network_dns}}
         Address={{.coreos_network_address}}

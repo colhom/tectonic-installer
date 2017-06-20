@@ -52,6 +52,7 @@ resource "matchbox_group" "controller" {
 
     # static IP
     coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_mac_address     = "${element(var.tectonic_metal_controller_macs, count.index)}"
     coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
     coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_master_ip, count.index,"")}"
@@ -98,6 +99,7 @@ resource "matchbox_group" "worker" {
     rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
 
     # static IP
+    coreos_mac_address     = "${element(var.tectonic_metal_worker_macs, count.index)}"
     coreos_static_ip       = "${var.tectonic_static_ip}"
     coreos_network_adapter = "${var.tectonic_metal_networkadapter}"
     coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
