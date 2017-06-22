@@ -87,14 +87,9 @@ Add the following to the `terraform.tfvars` file. This tells rkt how to talk to 
 ```
 tectonic_rkt_insecure_options="image,http"
 tectonic_rkt_image_protocol="docker://"
-```
-
-If your existing container repository is NOT quay, please also include:
-
-```
 tectonic_registry_cache_rkt_protocol="docker://"
 tectonic_registry_cache_rkt_insecure_options="image"
 ```
 
-If your existing container repository DOES NOT have TLS enabled, you should also include `tectonic_registry_cache_rkt_insecure_options="http,image"` as well.
+If your existing container repository DOES NOT have TLS enabled, you should also include `tectonic_registry_cache_rkt_insecure_options="image,http"` as well.
 
