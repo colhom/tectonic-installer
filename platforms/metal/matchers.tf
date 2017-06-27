@@ -50,10 +50,10 @@ resource "matchbox_group" "controller" {
     etcd_tls_enabled = "${var.tectonic_etcd_tls_enabled}"
 
     # extra data
-    etcd_image_url    = "${element(split(":", var.tectonic_container_images["etcd"]), 0)}"
+    etcd_image_url    = "${replace(var.tectonic_container_images["etcd"],var.tectonic_image_re,"$1")}"
     etcd_image_tag    = "v${var.tectonic_versions["etcd"]}"
-    kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kubelet_image_url = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+    kubelet_image_tag = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
 
     rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
     rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
@@ -96,8 +96,8 @@ resource "matchbox_group" "worker" {
     ssh_authorized_key = "${var.tectonic_ssh_authorized_key}"
 
     # extra data
-    kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
-    kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
+    kubelet_image_url  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$1")}"
+    kubelet_image_tag  = "${replace(var.tectonic_container_images["hyperkube"],var.tectonic_image_re,"$2")}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
 
     rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
