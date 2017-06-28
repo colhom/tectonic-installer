@@ -75,3 +75,21 @@ variable "cloud_provider" {
 variable "kubelet_node_label" {
   type = "string"
 }
+
+variable "network_interface_ids" {
+  type        = "list"
+  description = "List of NICs to use for master VMs"
+}
+
+variable "versions" {
+  description = "(internal) Versions of the components to use"
+  type        = "map"
+}
+
+variable "cl_channel" {
+  type = "string"
+}
+
+variable "container_images" {
+  type = "map"
+}

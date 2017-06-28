@@ -76,6 +76,12 @@ module "masters" {
   tectonic_service_disabled    = "${var.tectonic_vanilla_k8s}"
 
   use_custom_fqdn = "${var.tectonic_azure_use_custom_fqdn}"
+  versions        = "${var.tectonic_versions}"
+  cl_channel      = "${var.tectonic_cl_channel}"
+
+  use_custom_fqdn = "${var.tectonic_azure_use_custom_fqdn}"
+
+  container_images = "${var.tectonic_container_images}"
 }
 
 module "workers" {
@@ -99,6 +105,10 @@ module "workers" {
   tectonic_kube_dns_service_ip = "${module.bootkube.kube_dns_service_ip}"
   cloud_provider               = ""
   kubelet_node_label           = "node-role.kubernetes.io/node"
+  versions                     = "${var.tectonic_versions}"
+  cl_channel                   = "${var.tectonic_cl_channel}"
+
+  container_images = "${var.tectonic_container_images}"
 }
 
 module "dns" {

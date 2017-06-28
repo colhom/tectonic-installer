@@ -51,6 +51,7 @@ data "template_file" "kubelet-master" {
     node_taints_param = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
     cloud_provider    = "${var.cloud_provider}"
     cluster_dns       = "${var.tectonic_kube_dns_service_ip}"
+    pod_infra_image   = "${var.container_images["pod_infra_image"]}"
   }
 }
 
