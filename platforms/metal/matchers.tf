@@ -55,9 +55,6 @@ resource "matchbox_group" "controller" {
     kubelet_image_url = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
 
-    # custom pause container image
-    pod_infra_image = "${var.container_images["pod_infra_image"]}"
-
     rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
     rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
 
@@ -102,9 +99,6 @@ resource "matchbox_group" "worker" {
     kubelet_image_url  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 0)}"
     kubelet_image_tag  = "${element(split(":", var.tectonic_container_images["hyperkube"]), 1)}"
     kube_version_image = "${var.tectonic_container_images["kube_version"]}"
-
-    # custom pause container image
-    pod_infra_image = "${var.container_images["pod_infra_image"]}"
 
     rkt_image_protocol   = "${var.tectonic_rkt_image_protocol}"
     rkt_insecure_options = "${var.tectonic_rkt_insecure_options}"
