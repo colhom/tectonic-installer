@@ -95,3 +95,7 @@ variable "kubelet_cni_bin_dir" {
 variable "extra_tags" {
   type = "map"
 }
+
+variable "container_images" {
+  type = "map"
+}

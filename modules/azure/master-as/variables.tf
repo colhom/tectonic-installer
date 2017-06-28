@@ -119,3 +119,7 @@ variable "cl_channel" {
 variable "extra_tags" {
   type = "map"
 }
+
+variable "container_images" {
+  type = "map"
+}

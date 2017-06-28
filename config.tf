@@ -429,6 +429,7 @@ EOF
 
 variable "tectonic_rkt_image_protocol" {
   type = "string"
+
   description = <<EOF
 (optional) Protocol rkt will use when pulling images from registry.
 
@@ -446,7 +447,7 @@ EOF
 }
 
 variable "tectonic_rkt_insecure_options" {
-  type = "string"
+  type    = "string"
   default = "none"
 
   description = <<EOF
