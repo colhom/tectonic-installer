@@ -74,6 +74,7 @@ data "template_file" "kubelet" {
     cluster_dns       = "${var.tectonic_kube_dns_service_ip}"
     node_labels       = "${var.node_labels}"
     node_taints_param = "${var.node_taints != "" ? "--register-with-taints=${var.node_taints}" : ""}"
+    pod_infra_image   = "${var.container_images["pod_infra_image"]}"
   }
 }
 

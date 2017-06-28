@@ -61,3 +61,12 @@ variable "tectonic_service" {
 variable "tectonic_experimental" {
   default = false
 }
+
+variable "tectonic_service_disabled" {
+  description = "Specifies whether the tectonic installer systemd unit will be disabled. If true, no tectonic assets will be deployed"
+  default     = false
+}
+
+variable "container_images" {
+  type = "map"
+}
