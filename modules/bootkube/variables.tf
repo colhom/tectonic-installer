@@ -103,7 +103,6 @@ variable "oidc_groups_claim" {
   type        = "string"
 }
 
-
 variable "master_count" {
   description = "The number of the master nodes"
   type        = "string"

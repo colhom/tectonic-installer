@@ -27,6 +27,11 @@ This document gives an overview of variables used in all platforms of the Tecton
 | tectonic_license_path | The path to the tectonic licence file.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
 | tectonic_master_count | The number of master nodes to be created. This applies only to cloud platforms. | string | `1` |
 | tectonic_pull_secret_path | The path the pull secret file in JSON format.<br><br>Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`. | string | `` |
+| tectonic_registry_cache_image | (optional) image string to pull tectonic registry cache image from. Leave blank to disable | string | `` |
+| tectonic_registry_cache_rkt_insecure_options | (optional) rkt insecure options to set when pulling tectonic registry cache image. | string | `none` |
+| tectonic_registry_cache_rkt_protocol | (optional) rkt image protocol string to pull tectonic registry cache image. | string | `` |
+| tectonic_rkt_image_protocol | (optional) Protocol rkt will use when pulling images from registry.<br><br>Example: `docker://` | string | `` |
+| tectonic_rkt_insecure_options | (optional) Comma-separated list of insecure options for rkt.<br><br>Example: `image,tls` | string | `none` |
 | tectonic_service_cidr | This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation. The maximum size of this IP range is /12 | string | `10.3.0.0/16` |
 | tectonic_stats_url | The Tectonic statistics collection URL to which to report. | string | `https://stats-collector.tectonic.com` |
 | tectonic_update_app_id | (internal) The Tectonic Omaha update App ID | string | `6bc7b986-4654-4a0f-94b3-84ce6feb1db4` |

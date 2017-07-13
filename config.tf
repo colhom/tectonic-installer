@@ -317,7 +317,6 @@ If set to true, experimental Tectonic assets are being deployed.
 EOF
 }
 
-
 variable "tectonic_stats_url" {
   type        = "string"
   default     = "https://stats-collector.tectonic.com"

@@ -118,7 +118,6 @@ variable "stats_url" {
   type        = "string"
 }
 
-
 variable "rkt_insecure_options" {
   description = "Comma-separted values to provide for --insecure-options rkt flag"
   type        = "string"
