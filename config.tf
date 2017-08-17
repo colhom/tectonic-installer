@@ -38,7 +38,7 @@ variable "tectonic_container_images" {
     tectonic_monitoring_auth        = "quay.io/coreos/tectonic-monitoring-auth:v0.0.1"
     prometheus                      = "quay.io/prometheus/prometheus:v1.7.1"
     alertmanager                    = "quay.io/prometheus/alertmanager:v0.7.1"
-    tectonic_prometheus_operator    = "quay.io/coreos/tectonic-prometheus-operator:v1.4.1"
+    tectonic_prometheus_operator    = "quay.io/colin_hom/tectonic-prometheus-operator:v1.4.1-offline"
     node_exporter                   = "quay.io/prometheus/node-exporter:v0.14.0"
     kube_state_metrics              = "quay.io/coreos/kube-state-metrics:v0.5.0"
     config_reload                   = "quay.io/coreos/configmap-reload:v0.0.1"
