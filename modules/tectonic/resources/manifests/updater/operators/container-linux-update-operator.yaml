@@ -23,6 +23,7 @@ spec:
         command:
         - "/bin/update-operator"
         - "--manage-agent=true"
+        - "--agent-image-repo=${container_linux_update_operator_repo}"
         env:
         - name: POD_NAMESPACE
           valueFrom:
