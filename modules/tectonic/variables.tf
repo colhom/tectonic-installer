@@ -121,3 +121,8 @@ variable "stats_url" {
   description = "The statistics collection URL to which to report."
   type        = "string"
 }
+
+variable "image_re" {
+  type = "string"
+  default = "/^([^/]+/[^/]+/[^/]+):(.*)$/"
+}
