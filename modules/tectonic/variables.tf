@@ -127,5 +127,6 @@ variable "image_re" {
 (internal) Regular expression used to extract repo and tag components from image strings
 EOF
 
-  type = "string"
+  type    = "string"
+  default = "/^([^/]+/[^/]+/[^/]+):(.*)$/"
 }
