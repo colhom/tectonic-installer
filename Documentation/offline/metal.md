@@ -89,12 +89,11 @@ tectonic_rkt_insecure_options="image,http"
 tectonic_rkt_image_protocol="docker://"
 ```
 
-If your existing container repository is NOT quay, please also include:
+If your existing container repository is NOT quay, please also include. Some installations of quay may still require these fields as well, depending on how image signing and rkt fetch functionality is supported:
 
 ```
 tectonic_registry_cache_rkt_protocol="docker://"
 tectonic_registry_cache_rkt_insecure_options="image"
 ```
 
-If your existing container repository DOES NOT have TLS enabled, you should also include `tectonic_registry_cache_rkt_insecure_options="http,image"` as well.
-
+If your existing container repository DOES NOT have TLS enabled, you should set `tectonic_registry_cache_rkt_insecure_options="http,image"`.
