@@ -1,37 +1,25 @@
-# Tectonic Offline Baremetal Install
+# Tectonic Offline VMware Install
 
 **NOTE: as of tectonic version 1.7.1, you will need to use a [special tectonic installer branch](https://github.com/colhom/tectonic-installer/tree/1.7.1-tectonic.1-offline) in order to use this functionality**
 
-The offline instructions will allow installation of Tectonic in an offline network environment (no outgoing internet access). This guide is meant as a supplement to the [tectonic terraform baremetal docs](https://coreos.com/tectonic/docs/latest/install/bare-metal/metal-terraform.html).
+The offline instructions will allow installation of Tectonic in an offline network environment (no outgoing internet access). This guide is meant as a supplement to the [Tectonic terraform VMware docs](https://github.com/coreos/tectonic-installer/blob/master/Documentation/install/vmware/vmware-terraform.md).
 
-* Follow that guide up to the `terraform plan` step, stopping prior.
+* Follow that guide up to the "Deploy the cluster" step, stopping prior.
 
-* Then follow this guide. You'll find that most of this has to do with either matchbox or existing container registry infrastructure.
+* Then follow this guide. You'll find that most of this has to do with existing container registry infrastructure.
 
-* Finally resume the terraform baremetal installation instructions by executing the `terraform plan` and `terraform apply`.
+* Finally resume the terraform VMware installation instructions by executing the `terraform plan` and `terraform apply`.
 
 ## Requirements
 
-* Matchbox server already deployed and configured
 * Existing container image registry (quay or equivalent) which your tectonic cluster can access
 
 ## Basic approach
-* Make sure matchbox already has coreos images in it
 * Using your tectonic pull secret, sync the public tectonic registry cache image with your existing container image registry
 * On startup, nodes will pull the registry cache and host it locally
 * Kubernetes nodes and tectonic system services will use this local registry cache
 
 ## Installation Steps
-
-### Ensure matchbox server has CoreOS image
-
-**This is only necessary in environments where the server hosting matchbox does not have outgoing internet access. This does greatly reduce install time, so it is highly recommended.**
-
-Examine your `terraform.tfvars` file and note values for `tectonic_metal_cl_version` and `tectonic_cl_channel`. Ensure that `/var/lib/matchbox` is pre-populated with the correct images via instructions [here](https://coreos.com/matchbox/docs/latest/deployment.html#download-coreos-optional)
-
-### Provide organizational CA certificate bundle to terraform installer
-
-Paste the contents of your organizational CA certificate into `tectonic_metal_customcacertificate` in your `terraform.tfvars` file. When the Tectonic Kubernetes nodes come up, this certificate will be added to the system CA bundle.
 
 ### Sync tectonic registry cache to your local image repository
 
@@ -97,3 +85,7 @@ tectonic_registry_cache_rkt_insecure_options="image"
 ```
 
 If your existing container repository DOES NOT have TLS enabled, you should set `tectonic_registry_cache_rkt_insecure_options="http,image"`.
+
+## Execute the Install
+
+Follow the rest of the documentation from [Deploy the cluster](https://github.com/coreos/tectonic-installer/blob/master/Documentation/install/vmware/vmware-terraform.md#deploy-the-cluster) section
