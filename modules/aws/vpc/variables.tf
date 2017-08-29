@@ -56,3 +56,21 @@ variable "master_azs" {
 variable "worker_azs" {
   type = "list"
 }
+
+variable "cni_network_provider" {
+  type = "string"
+}
+
+variable "cluster_cidr" {
+  type = "string"
+}
+
+variable "calico_ipip_mode" {
+  type = "string"
+
+  description = <<EOF
+one of [always, cross-subnet, off]: corresponds to CALICO_IPV4POOL_IPIP flag.
+
+https://docs.projectcalico.org/v2.5/usage/configuration/ip-in-ip
+EOF
+}

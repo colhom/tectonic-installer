@@ -15,3 +15,23 @@ variable "enabled" {
 variable "calico_metrics_port" {
   default = "9091"
 }
+
+variable "cluster_cidr" {
+  type        = "string"
+  description = "pod cidr of tectonic cluster"
+}
+
+variable "ipip_mode" {
+  type        = "string"
+  description = "calico ipip mode: one of [off, cross-subnet, always]"
+}
+
+variable "subnet_ids" {
+  type        = "list"
+  description = "all kubernetes subnet ids. used to apply custom ACL rule"
+}
+
+variable "vpc_id" {
+  type        = "string"
+  description = "id of target vpc"
+}

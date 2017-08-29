@@ -4,6 +4,7 @@ data "ignition_config" "main" {
     "${data.ignition_file.s3_puller.id}",
     "${data.ignition_file.init_assets.id}",
     "${data.ignition_file.detect_master.id}",
+    "${module.calico-bgp-aws-ignition.ignition_file_id}",
   ]
 
   systemd = [
@@ -14,6 +15,9 @@ data "ignition_config" "main" {
     "${data.ignition_systemd_unit.init_assets.id}",
     "${data.ignition_systemd_unit.bootkube.id}",
     "${data.ignition_systemd_unit.tectonic.id}",
+    "${data.ignition_systemd_unit.rkt-gc-service.id}",
+    "${data.ignition_systemd_unit.rkt-gc-timer.id}",
+    "${module.calico-bgp-aws-ignition.ignition_systemd_unit_id}",
   ]
 }
 
@@ -138,11 +142,31 @@ data "ignition_systemd_unit" "init_assets" {
 
 data "ignition_systemd_unit" "bootkube" {
   name    = "bootkube.service"
+  enable  = "${var.bootkube_service_disabled ? false : true}"
   content = "${var.bootkube_service}"
 }
 
 data "ignition_systemd_unit" "tectonic" {
   name    = "tectonic.service"
-  enable  = "${var.tectonic_service_disabled == 0 ? true : false}"
+  enable  = "${var.tectonic_service_disabled ? false : true}"
   content = "${var.tectonic_service}"
+}
+
+data "ignition_systemd_unit" "rkt-gc-service" {
+  name    = "rkt-gc.service"
+  enable  = true
+  content = "${file("${path.module}/resources/services/rkt-gc.service")}"
+}
+
+data "ignition_systemd_unit" "rkt-gc-timer" {
+  name   = "rkt-gc.timer"
+  enable = true
+}
+
+module "calico-bgp-aws-ignition" {
+  source = "../../net/calico-bgp-aws/ignition"
+
+  awscli_image = "${var.container_images["awscli"]}"
+  enabled      = "${var.cni_network_provider == "calico-bgp" ? true : false}"
+  ipip_mode    = "${var.calico_ipip_mode}"
 }

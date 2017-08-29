@@ -407,6 +407,74 @@ variable "tectonic_calico_network_policy" {
 [ALPHA] If set to true, calico network policy support will be deployed.
 WARNING: Enabling an alpha feature means that future updates may become unsupported.
 This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
+
+NOTE: Only set to true if tectonic_cni_network_provider == "flannel-vxlan"
+EOF
+}
+
+variable "tectonic_cni_network_provider" {
+  type    = "string"
+  default = "flannel-vxlan"
+
+  description = <<EOF
+choose from:
+
+"flannel-vxlan" (stable)
+"calico-bgp" (alpha)
+
+EOF
+}
+
+variable "tectonic_calico_ipip_mode" {
+  type    = "string"
+  default = "always"
+
+  description = <<EOF
+Only applicable if tectonic_cni_network_provider = "calico-bgp".If you are unsure of what to set this to, leave the default.
+
+Controls how pod network IP packets are routed **between** Kubernetes nodes. Choose from [always, cross-subnet, off]
+
+always: all cross-node pod network packets will be routed through an IP tunnel between source and destination node.
+
+cross-subnet: cross-node pod network traffic will be routed directly (with no NAT) if nodes are in the same subnet, otherwise will utilize an IP tunnel.
+NOTE: src/dest checks for node instances will be disabled on AWS
+
+off: all cross-node pod network traffic will be routed directly between nodes (with no NAT). This requires that all nodes are in the same subnet.
+NOTE: src/dest checks for node instances will will be disabled on AWS
+
+https://docs.projectcalico.org/v2.5/usage/configuration/ip-in-ip
+EOF
+}
+
+variable "tectonic_calico_mtu" {
+  type    = "string"
+  default = "1480"
+
+  description = <<EOF
+Only applicable if tectonic_cni_network_provider = "calico-bgp".If you are unsure of what to set this to, leave this default.
+
+MTU for calico CNI network interfaces and IP tunnel (if enabled).
+
+If your host NICs will all have jumbo frames enabled, you can set this to a larger value to achieve better network utilization.
+
+  host mtu | calico mtu           | calico mtu   | Notes
+           |  ipip = always       |  ipip = off  |
+           |  ipip = cross-subnet |              |
+  ---------|----------------------------------------------------
+  >= 1500  |        1480          |   1500       | Most Common MTU
+  ---------|----------------------------------------------------
+     9000  |        8980          |   9000       | Jumbo Frames
+  --------------------------------------------------------------
+     9001  |        8981          |   9001       | AWS Jumbo Frames
+  --------------------------------------------------------------
+
+AWS instance types which have jumbo frames (9001 host mtu):
+
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/network_mtu.html#jumbo_frame_instances
+
+If you using exclusively EC2 instance types that support Jumbo Frames, you can assume a host mtu of 9001 with no further configuration.
+
+More information on choosing an optimal calico MTU across different platforms: https://docs.projectcalico.org/v2.5/usage/configuration/mtu
 EOF
 }
 

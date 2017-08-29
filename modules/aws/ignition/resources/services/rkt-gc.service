@@ -1,0 +1,7 @@
+[Unit]
+Description=Garbage Collection for rkt containers and images
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rkt gc --grace-period=4h
+ExecStart=/usr/bin/rkt image gc --grace-period=4h

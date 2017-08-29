@@ -35,7 +35,7 @@ variable "log_level" {
 }
 
 variable "calico_mtu" {
-  default = "1480"
+  type = "string"
 
   description = <<EOF
 mtu for calico veth and ip tunnel interfaces- varies by platform and network configuration. 1480 is a safe for all suppored platforms"
@@ -50,7 +50,7 @@ variable "calico_metrics_port" {
 }
 
 variable "calico_ipip_mode" {
-  default = "always"
+  type = "string"
 
   description = <<EOF
 one of [always, cross-subnet, off]: corresponds to CALICO_IPV4POOL_IPIP flag.

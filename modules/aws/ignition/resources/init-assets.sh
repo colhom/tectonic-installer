@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Defer cleanup rkt containers and images.
-trap "{ /usr/bin/rkt gc --grace-period=0; /usr/bin/rkt image gc --grace-period 0; } &> /dev/null" EXIT
-
 mkdir -p /run/metadata
 # shellcheck disable=SC2086,SC2154
 /usr/bin/rkt run \

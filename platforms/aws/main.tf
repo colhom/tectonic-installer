@@ -48,6 +48,9 @@ module "vpc" {
     join("|", keys(var.tectonic_aws_worker_custom_subnets)) :
     join("|", data.aws_availability_zones.azs.names)
   )}"
+  cni_network_provider = "${var.tectonic_cni_network_provider}"
+  calico_ipip_mode     = "${var.tectonic_calico_ipip_mode}"
+  cluster_cidr         = "${var.tectonic_cluster_cidr}"
 }
 
 module "etcd" {
@@ -86,7 +89,7 @@ module "ignition_masters" {
 
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
-  kubelet_cni_bin_dir       = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
+  kubelet_cni_bin_dir       = "${var.tectonic_calico_network_policy || (var.tectonic_cni_network_provider != "flannel-vxlan") ? "/var/lib/cni/bin" : "" }"
   kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
   kubeconfig_s3_location    = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
   assets_s3_location        = "${aws_s3_bucket_object.tectonic_assets.bucket}/${aws_s3_bucket_object.tectonic_assets.key}"
@@ -96,6 +99,8 @@ module "ignition_masters" {
   tectonic_service_disabled = "${var.tectonic_vanilla_k8s}"
   cluster_name              = "${var.tectonic_cluster_name}"
   image_re                  = "${var.tectonic_image_re}"
+  cni_network_provider      = "${var.tectonic_cni_network_provider}"
+  calico_ipip_mode          = "${var.tectonic_calico_ipip_mode}"
 }
 
 module "masters" {
@@ -133,17 +138,21 @@ module "masters" {
 module "ignition_workers" {
   source = "../../modules/aws/ignition"
 
-  kubelet_node_label     = "node-role.kubernetes.io/node"
-  kubelet_node_taints    = ""
-  kubelet_cni_bin_dir    = "${var.tectonic_calico_network_policy ? "/var/lib/cni/bin" : "" }"
-  kube_dns_service_ip    = "${module.bootkube.kube_dns_service_ip}"
-  kubeconfig_s3_location = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
-  assets_s3_location     = ""
-  container_images       = "${var.tectonic_container_images}"
-  bootkube_service       = ""
-  tectonic_service       = ""
-  cluster_name           = ""
-  image_re               = "${var.tectonic_image_re}"
+  kubelet_node_label        = "node-role.kubernetes.io/node"
+  kubelet_node_taints       = ""
+  kubelet_cni_bin_dir       = "${var.tectonic_calico_network_policy || (var.tectonic_cni_network_provider != "flannel-vxlan") ? "/var/lib/cni/bin" : "" }"
+  kube_dns_service_ip       = "${module.bootkube.kube_dns_service_ip}"
+  kubeconfig_s3_location    = "${aws_s3_bucket_object.kubeconfig.bucket}/${aws_s3_bucket_object.kubeconfig.key}"
+  assets_s3_location        = ""
+  container_images          = "${var.tectonic_container_images}"
+  bootkube_service          = ""
+  tectonic_service          = ""
+  cluster_name              = ""
+  image_re                  = "${var.tectonic_image_re}"
+  cni_network_provider      = "${var.tectonic_cni_network_provider}"
+  calico_ipip_mode          = "${var.tectonic_calico_ipip_mode}"
+  tectonic_service_disabled = true
+  bootkube_service_disabled = true
 }
 
 module "workers" {

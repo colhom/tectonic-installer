@@ -18,6 +18,6 @@ data "ignition_file" "disable-src-dst-check" {
 
 data "ignition_systemd_unit" "disable-src-dst-check" {
   name    = "disable-src-dst-check.service"
-  enable  = "${var.enabled}"
+  enable  = "${var.enabled && var.ipip_mode != "always"}"
   content = "${file("${path.module}/resources/services/disable-src-dst-check.service")}"
 }

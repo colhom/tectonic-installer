@@ -23,3 +23,14 @@ data "aws_vpc" "cluster_vpc" {
   #
   id = "${var.external_vpc_id == "" ? join(" ", aws_vpc.new_vpc.*.id) : var.external_vpc_id }"
 }
+
+module "calico-bgp-aws-vpc" {
+  source       = "../../net/calico-bgp-aws/vpc"
+  vpc_id       = "${var.external_vpc_id == "" ? aws_vpc.new_vpc.id : var.external_vpc_id}"
+  subnet_ids   = "${compact(distinct(concat(aws_subnet.master_subnet.*.id, aws_subnet.worker_subnet.*.id, data.aws_subnet.external_master.*.id, data.aws_subnet.external_worker.*.id)))}"
+  sg_worker_id = "${aws_security_group.worker.id}"
+  sg_master_id = "${aws_security_group.master.id}"
+  enabled      = "${var.cni_network_provider == "calico-bgp" ? true : false}"
+  ipip_mode    = "${var.calico_ipip_mode}"
+  cluster_cidr = "${var.cluster_cidr}"
+}

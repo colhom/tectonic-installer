@@ -47,6 +47,11 @@ variable "tectonic_service_disabled" {
   default     = false
 }
 
+variable "bootkube_service_disabled" {
+  description = "Specifies whether the bootkube systemd unit will be disabled."
+  default     = false
+}
+
 variable "cluster_name" {
   type = "string"
 }
@@ -57,4 +62,23 @@ variable "image_re" {
 EOF
 
   type = "string"
+}
+
+variable "cni_network_provider" {
+  description = <<EOF
+Name of the cni network provider
+EOF
+
+  type = "string"
+}
+
+variable "calico_ipip_mode" {
+  type = "string"
+
+  description = <<EOF
+
+one of [always, cross-subnet, off]: corresponds to CALICO_IPV4POOL_IPIP flag.
+
+https://docs.projectcalico.org/v2.5/usage/configuration/ip-in-ip
+EOF
 }

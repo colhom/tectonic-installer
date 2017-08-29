@@ -18,14 +18,24 @@ resource "aws_security_group_rule" "master_egress" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
-resource "aws_security_group_rule" "master_ingress_icmp" {
+resource "aws_security_group_rule" "master_ingress_icmp_echo_reply" {
   type              = "ingress"
   security_group_id = "${aws_security_group.master.id}"
 
   protocol    = "icmp"
   cidr_blocks = ["0.0.0.0/0"]
   from_port   = 0
-  to_port     = 0
+  to_port     = -1
+}
+
+resource "aws_security_group_rule" "master_ingress_icmp_dest_unreachable" {
+  type              = "ingress"
+  security_group_id = "${aws_security_group.master.id}"
+
+  protocol    = "icmp"
+  cidr_blocks = ["0.0.0.0/0"]
+  from_port   = 3
+  to_port     = 4
 }
 
 resource "aws_security_group_rule" "master_ingress_ssh" {
