@@ -204,6 +204,9 @@ kubectl create -f monitoring/prometheus-k8s-service-monitor-kubelet.yaml
 kubectl create -f monitoring/prometheus-k8s-service-monitor-node-exporter.yaml
 kubectl create -f monitoring/prometheus-k8s-service-monitor-prometheus.yaml
 kubectl create -f monitoring/prometheus-k8s-service-monitor-prometheus-operator.yaml
+if [[ -f monitoring/prometheus-k8s-service-monitor-calico-bgp.yaml ]];then
+  kubectl create -f monitoring/prometheus-k8s-service-monitor-calico-bgp.yaml
+fi
 kubectl create -f monitoring/prometheus-k8s.yaml
 kubectl create -f monitoring/prometheus-svc.yaml
 
