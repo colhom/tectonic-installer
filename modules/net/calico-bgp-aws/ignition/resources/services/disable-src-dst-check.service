@@ -1,0 +1,19 @@
+[Unit]
+Description=Disable src/dst check for this EC2 instance
+Before=docker.service
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/opt/tectonic
+
+User=root
+Group=root
+
+ExecStart=/usr/bin/bash /opt/tectonic/disable-src-dst-check.sh
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=docker.service
