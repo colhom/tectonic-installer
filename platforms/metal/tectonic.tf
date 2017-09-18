@@ -99,6 +99,8 @@ module "flannel_vxlan" {
   cluster_cidr      = "${var.tectonic_cluster_cidr}"
 
   bootkube_id = "${module.bootkube.id}"
+
+  enabled = "${var.tectonic_cni_network_provider == "flannel-vxlan" ? true : false}"
 }
 
 module "calico_network_policy" {
@@ -110,6 +112,21 @@ module "calico_network_policy" {
   cluster_cidr       = "${var.tectonic_cluster_cidr}"
   enabled            = "${var.tectonic_calico_network_policy}"
 
+  bootkube_id = "${module.bootkube.id}"
+}
+
+module "calico-bgp" {
+  source = "../../modules/net/calico-bgp"
+
+  kube_apiserver_url    = "https://${var.tectonic_metal_controller_domain}:443"
+  calico_image          = "${var.tectonic_container_images["calico"]}"
+  calico_cni_image      = "${var.tectonic_container_images["calico_cni"]}"
+  reflector_agent_image = "${var.tectonic_container_images["reflector_agent"]}"
+  cluster_cidr          = "${var.tectonic_cluster_cidr}"
+  calico_ipip_mode      = "${var.tectonic_calico_ipip_mode}"
+  calico_mtu            = "${var.tectonic_calico_mtu}"
+
+  enabled     = "${var.tectonic_cni_network_provider == "calico-bgp" ? true : false}"
   bootkube_id = "${module.bootkube.id}"
 }
 
@@ -127,5 +144,5 @@ data "archive_file" "assets" {
   # Additionally, data sources do not support managing any lifecycle whatsoever,
   # and therefore, the archive is never deleted. To avoid cluttering the module
   # folder, we write it in the Terraform managed hidden folder `.terraform`.
-  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico_network_policy.id}")}.zip"
+  output_path = "./.terraform/generated_${sha1("${module.tectonic.id} ${module.bootkube.id} ${module.flannel_vxlan.id} ${module.calico-bgp.id} ${module.calico_network_policy.id}")}.zip"
 }
