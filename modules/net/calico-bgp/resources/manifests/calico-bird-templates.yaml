@@ -223,11 +223,18 @@ data:
     }
 
     {{$network_key := printf "/bgp/v1/host/%s/network_v4" (getenv "NODENAME")}}{{$network := getv $network_key}}
-    filter calico_ipip {
+    filter calico_ipip
+    ip next_hop_ip;
+    {
     {{range ls "/v1/ipam/v4/pool"}}{{$data := json (getv (printf "/v1/ipam/v4/pool/%s" .))}}
       if ( net ~ {{$data.cidr}} ) then {
     {{if $data.ipip_mode}}{{if eq $data.ipip_mode "cross-subnet"}}
-        if ( bgp_next_hop ~ {{$network}} ) then
+        if ( defined( bgp_next_hop) ) then {
+          next_hop_ip = bgp_next_hop;
+        }else{
+          next_hop_ip = gw;
+        }
+        if ( next_hop_ip ~ {{$network}} ) then
           krt_tunnel = "";                     {{/* Destination in ipPool, mode is cross sub-net, route from-host on subnet, do not use IPIP */}}
         else
           krt_tunnel = "{{$data.ipip}}";       {{/* Destination in ipPool, mode is cross sub-net, route from-host off subnet, set the tunnel (if IPIP not enabled, value will be "") */}}
@@ -492,13 +499,12 @@ data:
     {{ $data }}
     {{end}}
     }
-  git-version: 3e34c586e987f4e3e2f8ee39bf51adcaa408b331
+  git-version: 1a55c2e7d1cf79608395c86c46d6a7da48f6e47f
   tunl-ip.template: "We must dump all pool data to this file to trigger a resync.\nOtherwise,
     confd notices the file hasn't changed and won't\nrun our python update script.\n
     \n{{range ls \"/pool\"}}{{$data := json (getv (printf \"/pool/%s\" .))}}\n  {{if
     $data.ipip}}{{if not $data.disabled}}{{$data.cidr}}{{end}}{{end}}\n{{end}}\n"
 kind: ConfigMap
 metadata:
-  creationTimestamp: null
   name: calico-bird-templates
   namespace: kube-system
