@@ -1,6 +1,6 @@
 # Tectonic Offline Baremetal Install
 
-**NOTE: as of tectonic version 1.7.1, you will need to use a [special tectonic installer branch](https://github.com/colhom/tectonic-installer/tree/1.7.1-tectonic.1-offline) in order to use this functionality**
+**NOTE: as of tectonic version 1.7.1, you will need to use a [special tectonic installer branch](https://github.com/colhom/tectonic-installer/tree/1.7.3-tectonic.2-calico-bgp-offline) in order to use this functionality**
 
 The offline instructions will allow installation of Tectonic in an offline network environment (no outgoing internet access). This guide is meant as a supplement to the [tectonic terraform baremetal docs](https://coreos.com/tectonic/docs/latest/install/bare-metal/metal-terraform.html).
 
@@ -43,7 +43,7 @@ You will need to make sure your docker config contains your tectonic pull secret
 PULL_SECRET_PATH=/path/to/tectonic-pull-secret.json
 mkdir ./tmp-config
 cp ${PULL_SECRET_PATH} ./tmp-config/config.json
-docker --config=./tmp-config pull quay.io/coreos/tectonic-registry-cache:1.7.1-tectonic.1
+docker --config=./tmp-config pull quay.io/coreos/tectonic-registry-cache:1.7.3-tectonic.2-calico-bgp
 rm -r ./tmp-config
 ```
 
@@ -54,9 +54,9 @@ The host is assumed to have `push` access to an existing repository already pres
 ```sh
 # This registry repository must exist ahead of time
 REGISTRY_REPO=example-registry.lab.local/my-team/tectonic-registry-cache
-REGISTRY_IMAGE="${REGISTRY_REPO}:1.7.1-tectonic.1"
+REGISTRY_IMAGE="${REGISTRY_REPO}:1.7.3-tectonic.2-calico-bgp"
 
-docker tag quay.io/coreos/tectonic-registry-cache:1.7.1-tectonic.1 ${REGISTRY_IMAGE}
+docker tag quay.io/coreos/tectonic-registry-cache:1.7.3-tectonic.2-calico-bgp ${REGISTRY_IMAGE}
 
 docker push ${REGISTRY_IMAGE}
 ```
@@ -64,7 +64,7 @@ docker push ${REGISTRY_IMAGE}
 Next, set the applicable field in `terraform.tfvars` to tell the installer where the registry cache image was pushed to.
 
 ```
-tectonic_registry_cache_image = "example-registry.lab.local/my-team/tectonic-registry-cache:1.7.1-tectonic.1"
+tectonic_registry_cache_image = "example-registry.lab.local/my-team/tectonic-registry-cache:1.7.3-tectonic.2-calico-bgp"
 ```
 
 ### Override container image settings
@@ -75,7 +75,7 @@ The `tectonic-image-config` container tool can autogenerate the config snippet y
 
 ```sh
 docker run -i --rm \
-    quay.io/colin_hom/tectonic-image-config:v1.7.1-tectonic.1 \
+    quay.io/colin_hom/tectonic-image-config:v1.7.3-tectonic.2-calico-bgp \
     offline-image-config --tectonic-registry-host=localhost:5000 < /path/to/tectonic/config.tf
 
 ```
