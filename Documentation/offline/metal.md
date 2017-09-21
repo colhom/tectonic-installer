@@ -1,6 +1,6 @@
 # Tectonic Offline Baremetal Install
 
-**NOTE: as of tectonic version 1.7.1, you will need to use a [special tectonic installer branch](https://github.com/colhom/tectonic-installer/tree/1.7.3-tectonic.2-calico-bgp-offline) in order to use this functionality**
+**NOTE: as of tectonic version 1.7.1, you will need to use a [special tectonic installer branch](https://github.com/colhom/tectonic-installer/tree/1.7.3-tectonic.2-offline-calico-bgp) in order to use this functionality**
 
 The offline instructions will allow installation of Tectonic in an offline network environment (no outgoing internet access). This guide is meant as a supplement to the [tectonic terraform baremetal docs](https://coreos.com/tectonic/docs/latest/install/bare-metal/metal-terraform.html).
 
