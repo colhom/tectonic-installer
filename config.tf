@@ -31,7 +31,7 @@ variable "tectonic_container_images" {
     bootkube                     = "quay.io/coreos/bootkube:v0.6.1"
     calico                       = "quay.io/colin_hom/calico-node:8a1df1f9109ea234bc31ec7f0523631106d65eff"
     calico_cni                   = "quay.io/calico/cni:v1.10.0"
-    reflector_agent              = "quay.io/colin_hom/bgp-reflector-agent:be707c20a961254ff5a7f216569a30c29845b4fe"
+    reflector_agent              = "quay.io/colin_hom/bgp-reflector-agent:85a9c5023ea1b2af4967383b013eb7f04ec478d5"
     config_reload                = "quay.io/coreos/configmap-reload:v0.0.1"
     console                      = "quay.io/coreos/tectonic-console:v1.9.3"
     error_server                 = "quay.io/coreos/tectonic-error-server:1.0"
