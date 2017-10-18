@@ -45,6 +45,26 @@ resource "aws_launch_configuration" "worker_conf" {
     volume_size = "${var.root_volume_size}"
     iops        = "${var.root_volume_type == "io1" ? var.root_volume_iops : 0}"
   }
+
+  ephemeral_block_device {
+    device_name  = "${local.devs[0]}"
+    virtual_name = "ephemeral0"
+  }
+
+  ephemeral_block_device {
+    device_name  = "${local.devs[1]}"
+    virtual_name = "ephemeral1"
+  }
+
+  ephemeral_block_device {
+    device_name  = "${local.devs[2]}"
+    virtual_name = "ephemeral2"
+  }
+
+  ephemeral_block_device {
+    device_name  = "${local.devs[3]}"
+    virtual_name = "ephemeral3"
+  }
 }
 
 resource "aws_autoscaling_group" "workers" {
