@@ -1,0 +1,76 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: es-workload
+  namespace: tectonic-system
+  labels:
+    k8s-app: es-workload
+    tier: logging
+spec:
+  serviceName: es-workload
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: es-workload
+  template:
+    metadata:
+      labels:
+        k8s-app: es-workload
+        tier: logging
+    spec:
+      serviceAccountName: elasticsearch
+      containers:
+      - name: es-node
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - IPC_LOCK
+        image: quay.io/pires/docker-elasticsearch-kubernetes:5.6.3
+        imagePullPolicy: Always
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_NAME
+          value: es-workload
+        - name: DISCOVERY_SERVICE
+          value: es-workload.tectonic-system.svc.cluster.local
+        - name: NODE_MASTER
+          value: "true"
+        - name: NODE_INGEST
+          value: "true"
+        - name: HTTP_ENABLE
+          value: "true"
+        - name: ES_JAVA_OPTS
+          value: "-Xms1024m -Xmx1024m"
+        ports:
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        - containerPort: 9200
+          name: db
+          protocol: TCP
+        volumeMounts:
+        - name: es-workload-data
+          mountPath: /data
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: es-init
+        securityContext:
+          privileged: true
+  volumeClaimTemplates:
+  - metadata:
+      name: es-workload-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: local-storage
+      resources:
+        requests:
+          storage: 5Gi # local storage provisioner does not support this yet

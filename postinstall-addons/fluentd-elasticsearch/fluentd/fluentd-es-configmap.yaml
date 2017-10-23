@@ -1,0 +1,156 @@
+kind: ConfigMap
+apiVersion: v1
+data:
+  containers.input.conf: |-
+    <source>
+      type tail
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-es-workload.log.pos
+      time_format %Y-%m-%dT%H:%M:%S.%NZ
+      tag kubernetes.*
+      format json
+      read_from_head true
+    </source>
+  monitoring.conf: |-
+    # Prometheus Exporter Plugin
+    # input plugin that exports metrics
+    <source>
+      @type prometheus
+    </source>
+
+    <source>
+      @type monitor_agent
+    </source>
+
+    # input plugin that collects metrics from MonitorAgent
+    <source>
+      @type prometheus_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # input plugin that collects metrics for output plugin
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # input plugin that collects metrics for in_tail plugin
+    <source>
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+  output.conf: |-
+    <filter kubernetes.**>
+      type kubernetes_metadata
+    </filter>
+
+    <match **>
+       type elasticsearch
+       include_tag_key true
+       host es-workload.tectonic-system.svc.cluster.local
+       port 9200
+       logstash_format true
+       # Set the chunk limits.
+       buffer_chunk_limit 2M
+       buffer_queue_limit 8
+       flush_interval 5s
+       # Never wait longer than 5 minutes between retries.
+       max_retry_wait 30
+       # Disable the limit on the number of retries (retry forever).
+       disable_retry_limit
+       # Use multiple threads for processing.
+       num_threads 2
+    </match>
+metadata:
+  name: fluentd-es-workload-config
+  namespace: tectonic-system
+---
+kind: ConfigMap
+apiVersion: v1
+data:
+  system.input.conf: |-
+    # Logs from systemd-journal for interesting services.
+    <source>
+      type systemd
+      pos_file /var/log/fluentd-systemd.pos
+      read_from_head true
+      tag host.journald
+    </source>
+    <source>
+      type tail
+      path /var/log/containers/*\-system_*.log
+      pos_file /var/log/fluentd-es-workload.log.pos
+      time_format %Y-%m-%dT%H:%M:%S.%NZ
+      tag kubernetes.*
+      format json
+      read_from_head true
+    </source>
+
+
+  monitoring.conf: |-
+    # Prometheus Exporter Plugin
+    # input plugin that exports metrics
+    <source>
+      @type prometheus
+    </source>
+
+    <source>
+      @type monitor_agent
+    </source>
+
+    # input plugin that collects metrics from MonitorAgent
+    <source>
+      @type prometheus_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # input plugin that collects metrics for output plugin
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # input plugin that collects metrics for in_tail plugin
+    <source>
+      @type prometheus_tail_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+  output.conf: |-
+    <filter kubernetes.**>
+      type kubernetes_metadata
+    </filter>
+
+    <match **>
+       type elasticsearch
+       log_level info
+       include_tag_key true
+       host es-system.tectonic-system.svc.cluster.local
+       port 9200
+       logstash_format true
+       # Set the chunk limits.
+       buffer_chunk_limit 2M
+       buffer_queue_limit 8
+       flush_interval 5s
+       # Never wait longer than 5 minutes between retries.
+       max_retry_wait 30
+       # Disable the limit on the number of retries (retry forever).
+       disable_retry_limit
+       # Use multiple threads for processing.
+       num_threads 2
+    </match>
+metadata:
+  name: fluentd-es-system-config
+  namespace: tectonic-system
+

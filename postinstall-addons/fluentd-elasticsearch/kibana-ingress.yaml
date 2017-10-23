@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/ssl-redirect: "true"
+    ingress.kubernetes.io/use-port-in-redirects: "true"
+    kubernetes.io/ingress.class: tectonic
+  name: kibana-ingress
+  namespace: tectonic-system
+spec:
+  rules:
+  - host: chom-demo.se.k8s.work
+    http:
+      paths:
+      - backend:
+          serviceName: kibana-workload-auth
+          servicePort: 4180
+        path: /kibana-workload
+      - backend:
+          serviceName: kibana-system-auth
+          servicePort: 4180
+        path: /kibana-system
+  tls:
+  - hosts:
+    - chom-demo.se.k8s.work
+    secretName: tectonic-ingress-tls-secret

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd-es-workload
+  namespace: tectonic-system
+  labels:
+    k8s-app: fluentd-es-workload
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: metrics
+    name: metrics
+  selector:
+    k8s-app: fluentd-es-workload
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd-es-system
+  namespace: tectonic-system
+  labels:
+    k8s-app: fluentd-es-system
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    name: metrics
+    targetPort: metrics
+  selector:
+    k8s-app: fluentd-es-system

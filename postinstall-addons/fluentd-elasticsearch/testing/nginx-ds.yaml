@@ -1,0 +1,71 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: nginx-loadtest
+  labels:
+    app: nginx-loadtest
+spec:
+  template:
+    metadata:
+      labels:
+        app: nginx-loadtest
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:stable-alpine
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-loadtest
+  labels:
+    app: nginx-loadtest
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: nginx-loadtest
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-client
+  labels:
+    app: nginx-client
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx-client
+    spec:
+      containers:
+      - name: alpine
+        image: alpine:latest
+        command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          echo load test starting
+          while true;do
+            reqCnt=$(( ${RANDOM} % 100 ))
+            echo making ${reqCnt} requests
+            for i in seq 0 $reqCnt;do
+               wget -O /dev/null http://nginx-loadtest
+            done
+            sleepSec=$(( ${RANDOM} % 10 ))
+            echo request done, will sleep for ${sleepSec} now
+            sleep ${sleepSec}
+          done
+

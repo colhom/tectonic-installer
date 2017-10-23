@@ -1,0 +1,82 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: es-system
+  namespace: tectonic-system
+  labels:
+    k8s-app: es-system
+    tier: logging
+spec:
+  serviceName: es-system
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: es-system
+  template:
+    metadata:
+      labels:
+        k8s-app: es-system
+        tier: logging
+    spec:
+      serviceAccountName: elasticsearch
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+      containers:
+      - name: es-node
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - IPC_LOCK
+        image: quay.io/pires/docker-elasticsearch-kubernetes:5.6.3
+        imagePullPolicy: Always
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_NAME
+          value: es-system
+        - name: DISCOVERY_SERVICE
+          value: es-system.tectonic-system.svc.cluster.local
+        - name: NODE_MASTER
+          value: "true"
+        - name: NODE_INGEST
+          value: "true"
+        - name: HTTP_ENABLE
+          value: "true"
+        - name: ES_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"
+        ports:
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        - containerPort: 9200
+          name: db
+          protocol: TCP
+        volumeMounts:
+        - name: es-system-data
+          mountPath: /data
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: es-init
+        securityContext:
+          privileged: true
+  volumeClaimTemplates:
+  - metadata:
+      name: es-system-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: ebs-system
+      resources:
+        requests:
+          storage: 20Gi
