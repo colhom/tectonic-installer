@@ -63,6 +63,8 @@ spec:
         - --audit-log-maxage=30
         - --audit-log-maxbackup=3
         - --audit-log-maxsize=100
+        - --feature-gates
+        - PersistentLocalVolumes=true
         volumeMounts:
         - mountPath: /etc/ssl/certs
           name: ssl-certs-host
