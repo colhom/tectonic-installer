@@ -1,0 +1,1 @@
+./../../platforms/metal/variables.tf

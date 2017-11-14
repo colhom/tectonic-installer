@@ -52,6 +52,22 @@ apply: terraform-init
 destroy: terraform-init
 	cd $(BUILD_DIR) && $(TF_CMD) destroy $(TF_DESTROY_OPTIONS) -force $(TOP_DIR)/platforms/$(PLATFORM)
 
+.PHONY: matchbox-assets-init
+matchbox-assets-init: terraform-init
+ifneq ($(shell $(TF_CMD) version | grep -E "Terraform v0\.1[0-9]\.[0-9]+"), )
+	cd $(BUILD_DIR) && $(TF_CMD) init $(TF_INIT_OPTIONS) $(TOP_DIR)/modules/matchbox-assets
+else
+	cd $(BUILD_DIR) && $(TF_CMD) get $(TF_GET_OPTIONS) $(TOP_DIR)/modules/matchbox-assets
+endif
+
+.PHONY: matchbox-assets-apply
+matchbox-assets-apply: matchbox-assets-init
+	cd $(BUILD_DIR) && $(TF_CMD) apply $(TF_APPLY_OPTIONS) $(TOP_DIR)/modules/matchbox-assets
+
+.PHONY: matchbox-assets-destroy
+matchbox-assets-destroy: matchbox-assets-init
+	cd $(BUILD_DIR) && $(TF_CMD) destroy $(TF_DESTROY_OPTIONS) -force $(TOP_DIR)/modules/matchbox-assets
+
 define terraform-docs
 	$(if $(TF_DOCS),,$(error "terraform-docs revision >= a8b59f8 is required (https://github.com/segmentio/terraform-docs)"))
 
