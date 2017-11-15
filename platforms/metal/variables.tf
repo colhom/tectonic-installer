@@ -184,3 +184,70 @@ variable "tectonic_metal_calico_mtu" {
 Note: This setting is only effective, if tectonic_networking is set to `calico`.
 EOF
 }
+
+## Static IP Variables
+##########################
+
+variable "tectonic_static_ip" {
+  type        = "string"
+  description = "configure static ip for nodes (any value other than empty string)"
+  default     = ""
+}
+
+variable "tectonic_metal_master_networkadapter" {
+  type        = "string"
+  default     = ""
+  description = "networkd 'Name' match string ex: eno2. Leave blank to match interface by provided mac address"
+}
+
+variable "tectonic_metal_worker_networkadapter" {
+  type        = "string"
+  default     = ""
+  description = "networkd 'Name' match string ex: eno2. Leave blank to match interface by provided mac address."
+}
+
+variable "tectonic_metal_dnsserver" {
+  type        = "string"
+  default     = ""
+  description = "DNS Server IP Address"
+}
+
+variable "tectonic_metal_worker_ip" {
+  type    = "map"
+  default = {}
+
+  description = <<EOF
+Metal Worker IP Address
+
+Example: `tectonic_metal_worker_ip = {
+  "0" = "192.168.2.71/24"
+  "1" = "192.168.2.72/24"
+}`
+EOF
+}
+
+variable "tectonic_metal_worker_gateway" {
+  type        = "string"
+  default     = ""
+  description = "Metal Master Gateway IP Address"
+}
+
+variable "tectonic_metal_master_ip" {
+  type    = "map"
+  default = {}
+
+  description = <<EOF
+Metal Master IP Address
+
+Example: `tectonic_metal_master_ip = {
+  "0" = "192.168.2.71/24"
+  "1" = "192.168.2.72/24"
+}`
+EOF
+}
+
+variable "tectonic_metal_master_gateway" {
+  type        = "string"
+  default     = ""
+  description = "Metal Master Gateway IP Address"
+}

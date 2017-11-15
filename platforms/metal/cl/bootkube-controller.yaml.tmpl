@@ -69,3 +69,33 @@ passwd:
     - name: core
       ssh_authorized_keys:
         - {{.ssh_authorized_key}}
+
+ignition:
+  config:
+    append:
+      - source: {{.registry_cache_ign_master_config_url}}
+        verification:
+          hash:
+            function: sha512
+            sum: {{.registry_cache_ign_master_config_hash}}
+      - source: {{.custom_cacerts_ign_master_config_url}}
+        verification:
+          hash:
+            function: sha512
+            sum: {{.custom_cacerts_ign_master_config_hash}}
+networkd:
+  units:
+    {{if .coreos_static_ip}}
+    - name: 00-tectonic.network
+      contents: |
+        [Match]
+        {{if .coreos_network_adapter}}
+        Name={{.coreos_network_adapter}}
+        {{else}}
+        MACAddress={{.coreos_mac_address}}
+        {{end}}
+        [Network]
+        DNS={{.coreos_network_dns}}
+        Address={{.coreos_network_address}}
+        Gateway={{.coreos_network_gateway}}
+    {{end}}

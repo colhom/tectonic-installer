@@ -42,6 +42,14 @@ module "ignition_masters" {
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   use_metadata              = false
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+
+  registry_cache_image_repo           = "${var.tectonic_registry_cache_image_repo}"
+  registry_cache_image_tag            = "${var.tectonic_registry_cache_image_tag}"
+  registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
+  registry_cache_rkt_image_protocol   = "${var.tectonic_registry_cache_rkt_protocol}"
+  rkt_image_protocol                  = "${var.tectonic_rkt_image_protocol}"
+  rkt_insecure_options                = "${var.tectonic_rkt_insecure_options}"
+  custom_cacertificates               = "${var.tectonic_custom_cacertificates}"
 }
 
 resource "matchbox_group" "controller" {
@@ -70,6 +78,21 @@ resource "matchbox_group" "controller" {
     ign_max_user_watches_json           = "${jsonencode(module.ignition_masters.max_user_watches_rendered)}"
     ign_tectonic_path_unit_json         = "${jsonencode(module.tectonic.systemd_path_unit_rendered)}"
     ign_tectonic_service_json           = "${jsonencode(module.tectonic.systemd_service_rendered)}"
+
+    //field custom
+    registry_cache_ign_master_config_url  = "${format(local.fc_ign_url_tmpl,var.tectonic_metal_matchbox_http_url,"master","registry-cache")}"
+    registry_cache_ign_master_config_hash = "${sha512(matchbox_profile.master-registry-cache.raw_ignition)}"
+
+    custom_cacerts_ign_master_config_url  = "${format(local.fc_ign_url_tmpl,var.tectonic_metal_matchbox_http_url,"master","custom-cacerts")}"
+    custom_cacerts_ign_master_config_hash = "${sha512(matchbox_profile.master-custom-cacerts.raw_ignition)}"
+
+    # static IP
+    coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_mac_address     = "${element(var.tectonic_metal_controller_macs, count.index)}"
+    coreos_network_adapter = "${var.tectonic_metal_master_networkadapter}"
+    coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_master_ip, count.index,"")}"
+    coreos_network_gateway = "${var.tectonic_metal_master_gateway}"
   }
 }
 
@@ -84,6 +107,14 @@ module "ignition_workers" {
   kubelet_node_label   = "node-role.kubernetes.io/node"
   kubelet_node_taints  = ""
   tectonic_vanilla_k8s = "${var.tectonic_vanilla_k8s}"
+
+  registry_cache_image_repo           = "${var.tectonic_registry_cache_image_repo}"
+  registry_cache_image_tag            = "${var.tectonic_registry_cache_image_tag}"
+  registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
+  registry_cache_rkt_image_protocol   = "${var.tectonic_registry_cache_rkt_protocol}"
+  rkt_image_protocol                  = "${var.tectonic_rkt_image_protocol}"
+  rkt_insecure_options                = "${var.tectonic_rkt_insecure_options}"
+  custom_cacertificates               = "${var.tectonic_custom_cacertificates}"
 }
 
 resource "matchbox_group" "worker" {
@@ -110,5 +141,20 @@ resource "matchbox_group" "worker" {
     ign_k8s_node_bootstrap_service_json = "${jsonencode(module.ignition_workers.k8s_node_bootstrap_service_rendered)}"
     ign_kubelet_service_json            = "${jsonencode(module.ignition_workers.kubelet_service_rendered)}"
     ign_max_user_watches_json           = "${jsonencode(module.ignition_workers.max_user_watches_rendered)}"
+
+    //field custom
+    registry_cache_ign_worker_config_url  = "${format(local.fc_ign_url_tmpl,var.tectonic_metal_matchbox_http_url,"worker","registry-cache")}"
+    registry_cache_ign_worker_config_hash = "${sha512(matchbox_profile.worker-registry-cache.raw_ignition)}"
+
+    custom_cacerts_ign_worker_config_url  = "${format(local.fc_ign_url_tmpl,var.tectonic_metal_matchbox_http_url,"worker","custom-cacerts")}"
+    custom_cacerts_ign_worker_config_hash = "${sha512(matchbox_profile.worker-custom-cacerts.raw_ignition)}"
+
+    # static IP
+    coreos_static_ip       = "${var.tectonic_static_ip}"
+    coreos_mac_address     = "${element(var.tectonic_metal_worker_macs, count.index)}"
+    coreos_network_adapter = "${var.tectonic_metal_worker_networkadapter}"
+    coreos_network_dns     = "${var.tectonic_metal_dnsserver}"
+    coreos_network_address = "${var.tectonic_static_ip == "" ? "" : lookup(var.tectonic_metal_worker_ip, count.index,"")}"
+    coreos_network_gateway = "${var.tectonic_metal_worker_gateway}"
   }
 }
