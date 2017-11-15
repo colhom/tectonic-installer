@@ -87,6 +87,18 @@ variable "tectonic_container_images" {
     tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.7.1"
     tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.2.3"
     tectonic_torcx               = "quay.io/coreos/tectonic-torcx:installer-latest"
+    pod_infra_image              = "gcr.io/google_containers/pause-amd64:3.0"
+    monitoring_auth              = "quay.io/coreos/tectonic-monitoring-auth:v0.0.2"
+    config_reload                = "quay.io/coreos/configmap-reload:v0.0.1"
+    kube_state_metrics           = "quay.io/coreos/kube-state-metrics:v1.1.0"
+    grafana                      = "quay.io/coreos/monitoring-grafana:4.5.2"
+    grafana_watcher              = "quay.io/coreos/grafana-watcher:v0.0.8"
+    prometheus_operator          = "quay.io/coreos/prometheus-operator:v0.14.1"
+    prometheus_config_reload     = "quay.io/coreos/prometheus-config-reloader:v0.0.2"
+    prometheus                   = "quay.io/prometheus/prometheus:v1.8.1"
+    alertmanager                 = "quay.io/prometheus/alertmanager:v0.9.1"
+    node_exporter                = "quay.io/prometheus/node-exporter:v0.15.0"
+    addon_resizer_coreos         = "quay.io/coreos/addon-resizer:1.0"
   }
 }
 
@@ -99,7 +111,7 @@ variable "tectonic_container_base_images" {
     config_reload            = "quay.io/coreos/configmap-reload"
     addon_resizer            = "quay.io/coreos/addon-resizer"
     kube_state_metrics       = "quay.io/coreos/kube-state-metrics"
-    grafana                  = "quay.io/coreos/grafana-monitoring"
+    grafana                  = "quay.io/coreos/monitoring-grafana"
     grafana_watcher          = "quay.io/coreos/grafana-watcher"
     prometheus_operator      = "quay.io/coreos/prometheus-operator"
     prometheus_config_reload = "quay.io/coreos/prometheus-config-reloader"
@@ -475,4 +487,75 @@ variable "tectonic_bootstrap_upgrade_cl" {
   type        = "string"
   default     = "true"
   description = "(internal) Whether to trigger a ContainerLinux upgrade on node bootstrap."
+}
+
+// Offline
+
+variable "tectonic_registry_cache_image_repo" {
+  type = "string"
+
+  description = <<EOF
+(offline) image repo to pull tectonic registry cache image from
+EOF
+}
+
+variable "tectonic_registry_cache_image_tag" {
+  type    = "string"
+  default = ""
+
+  description = <<EOF
+(offline) image tag for tectonic registry cache image (empty string unless tectonic_registry_cache_rkt_protocol = "docker://")
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_protocol" {
+  type = "string"
+
+  description = <<EOF
+(offline) rkt image protocol string to pull tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_rkt_image_protocol" {
+  type = "string"
+
+  description = <<EOF
+(offline) Protocol rkt will use when pulling images from registry.
+
+Example: `docker://`
+EOF
+}
+
+variable "tectonic_registry_cache_rkt_insecure_options" {
+  type = "string"
+
+  description = <<EOF
+(offline) rkt insecure options to set when pulling tectonic registry cache image.
+EOF
+}
+
+variable "tectonic_rkt_insecure_options" {
+  type = "string"
+
+  description = <<EOF
+(offline) Comma-separated list of insecure options for rkt.
+Example: `image,tls`
+EOF
+}
+
+variable "tectonic_custom_cacertificates" {
+  default = []
+
+  description = <<EOF
+List of paths to SSL CA Certificates you would like trusted on Kubernetes nodes, in PEM-encoded x509 format.
+
+These certificates will be added to the root of trust on both master and worker nodes via the update-cacertificates-rehash systemd service enabled on every boot.
+
+Example:
+tectonic_custom_cacertificates = [
+  "~/fake-ssl/authority1.crt",
+  "~/fake-ssl/authority2.crt",
+  "~/fake-ssl/authority3.crt"
+]
+EOF
 }
