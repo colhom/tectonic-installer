@@ -111,3 +111,38 @@ variable "metadata_provider" {
 variable "use_metadata" {
   default = true
 }
+
+//Offline
+
+variable "registry_cache_image_repo" {
+  description = "image repo component for registry cache image"
+  type        = "string"
+}
+
+variable "registry_cache_image_tag" {
+  description = "image tag component for registry cache image. Not needed for ACI distribution"
+}
+
+variable "registry_cache_rkt_insecure_options" {
+  description = "Comma-separted values to provide for --insecure-options rkt flag for running registry cache container"
+  type        = "string"
+}
+
+variable "registry_cache_rkt_image_protocol" {
+  description = "Image protocol to use when fetching registry cache container image (eg: `docker://`)"
+  type        = "string"
+}
+
+variable "rkt_insecure_options" {
+  description = "Comma-separted values to provide for --insecure-options rkt flag when fetching from registry cache"
+  type        = "string"
+}
+
+variable "rkt_image_protocol" {
+  description = "Image protocol to use when fetching rkt images from registry cache (eg: `docker://`)"
+  type        = "string"
+}
+
+variable "custom_cacertificates" {
+  type = "list"
+}

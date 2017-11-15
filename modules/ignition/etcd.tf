@@ -54,6 +54,10 @@ data "template_file" "etcd" {
     metadata_env                = "${var.use_metadata ? local.metadata_env : ""}"
     name                        = "${data.template_file.etcd_names.*.rendered[count.index]}"
     scheme                      = "${local.scheme}"
+
+    //Offline
+    rkt_image_protocol   = "${var.rkt_image_protocol}"
+    rkt_insecure_options = "${var.rkt_insecure_options}"
   }
 }
 

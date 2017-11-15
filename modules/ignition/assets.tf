@@ -39,6 +39,9 @@ data "template_file" "kubelet" {
     kubeconfig_fetch_cmd  = "${var.kubeconfig_fetch_cmd != "" ? "ExecStartPre=${var.kubeconfig_fetch_cmd}" : ""}"
     node_label            = "${var.kubelet_node_label}"
     node_taints_param     = "${var.kubelet_node_taints != "" ? "--register-with-taints=${var.kubelet_node_taints}" : ""}"
+    pod_infra_image       = "${var.container_images["pod_infra_image"]}"
+    rkt_insecure_options  = "${var.rkt_insecure_options}"
+    rkt_image_protocol    = "${var.rkt_image_protocol}"
   }
 }
 
@@ -116,6 +119,11 @@ data "template_file" "installer_kubelet_env" {
   vars {
     kubelet_image_url = "${replace(var.container_images["hyperkube"],var.image_re,"$1")}"
     kubelet_image_tag = "${replace(var.container_images["hyperkube"],var.image_re,"$2")}"
+
+    # custom pause container image
+    pod_infra_image      = "${var.container_images["pod_infra_image"]}"
+    rkt_image_protocol   = "${var.rkt_image_protocol}"
+    rkt_insecure_options = "${var.rkt_insecure_options}"
   }
 }
 
