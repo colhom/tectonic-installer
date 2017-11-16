@@ -12,14 +12,22 @@ This document gives an overview of variables used in the bare metal platform of 
 | tectonic_metal_controller_domains | Ordered list of controller domain names.<br><br>Example: `["node2.example.com", "node3.example.com"]` | list | - |
 | tectonic_metal_controller_macs | Ordered list of controller MAC addresses for matching machines.<br><br>Example: `["52:54:00:a1:9c:ae"]` | list | - |
 | tectonic_metal_controller_names | Ordered list of controller names.<br><br>Example: `["node1"]` | list | - |
+| tectonic_metal_dnsserver | DNS Server IP Address | string | `` |
 | tectonic_metal_ingress_domain | The domain name which resolves to Tectonic Ingress (i.e. worker node(s))<br><br>Example: `tectonic.example.com` | string | - |
+| tectonic_metal_master_gateway | Metal Master Gateway IP Address | string | `` |
+| tectonic_metal_master_ip | Metal Master IP Address<br><br>Example: `tectonic_metal_master_ip = {   "0" = "192.168.2.71/24"   "1" = "192.168.2.72/24" }` | map | `<map>` |
+| tectonic_metal_master_networkadapter | networkd 'Name' match string ex: eno2. Leave blank to match interface by provided mac address | string | `` |
 | tectonic_metal_matchbox_ca | The content of the Matchbox CA certificate to trust.<br><br>Example: ``` <<EOD -----BEGIN CERTIFICATE----- MIIFDTCCAvWgAwIBAgIJAIuXq10k2OFlMA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNV ... Od27a+1We/P5ey7WRlwCfuEcFV7nYS/qMykYdQ9fxHSPgTPlrGrSwKstaaIIqOkE kA== -----END CERTIFICATE----- EOD ``` | string | - |
 | tectonic_metal_matchbox_client_cert | The content of the Matchbox client TLS certificate.<br><br>Example: ``` <<EOD -----BEGIN CERTIFICATE----- MIIEYDCCAkigAwIBAgICEAEwDQYJKoZIhvcNAQELBQAwEjEQMA4GA1UEAwwHZmFr ... jyXQv9IZPMTwOndF6AVLH7l1F0E= -----END CERTIFICATE----- EOD ``` | string | - |
 | tectonic_metal_matchbox_client_key | The content of the Matchbox client TLS key.<br><br>Example: ``` <<EOD -----BEGIN RSA PRIVATE KEY----- MIIEpQIBAAKCAQEAr8S7x/tAS6W+aRW3X833OvNfxXjUJAiRkUV85Raln7tqVcTG ... Pikk0rvNVB/vrPeVjAdGY9TJC/vpz3om92DRDmUifu8rCFxIHE0GrQ0= -----END RSA PRIVATE KEY----- EOD ``` | string | - |
 | tectonic_metal_matchbox_http_url | Matchbox HTTP read-only URL.<br><br>Example: `e.g. http://matchbox.example.com:8080` | string | - |
 | tectonic_metal_matchbox_rpc_endpoint | The Matchbox gRPC API endpoint.<br><br>Example: `matchbox.example.com:8081` | string | - |
 | tectonic_metal_worker_domains | Ordered list of worker domain names.<br><br>Example: `["node2.example.com", "node3.example.com"]` | list | - |
+| tectonic_metal_worker_gateway | Metal Master Gateway IP Address | string | `` |
+| tectonic_metal_worker_ip | Metal Worker IP Address<br><br>Example: `tectonic_metal_worker_ip = {   "0" = "192.168.2.71/24"   "1" = "192.168.2.72/24" }` | map | `<map>` |
 | tectonic_metal_worker_macs | Ordered list of worker MAC addresses for matching machines.<br><br>Example: `["52:54:00:b2:2f:86", "52:54:00:c3:61:77"]` | list | - |
 | tectonic_metal_worker_names | Ordered list of worker names.<br><br>Example: `["node2", "node3"]` | list | - |
+| tectonic_metal_worker_networkadapter | networkd 'Name' match string ex: eno2. Leave blank to match interface by provided mac address. | string | `` |
 | tectonic_ssh_authorized_key | SSH public key to use as an authorized key.<br><br>Example: `ssh-rsa AAAB3N...` | string | - |
+| tectonic_static_ip | configure static ip for nodes (any value other than empty string) | string | `` |
 
