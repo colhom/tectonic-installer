@@ -16,7 +16,9 @@ resource "null_resource" "container-linux" {
   depends_on = ["null_resource.assets-directory-structure"]
 
   provisioner "local-exec" {
-    command = "${format("%s/get-coreos %s %s %s",path.module,
+    command = "${format("BASE_URL=\"%s\" %s/get-coreos %s %s %s",
+                 var.container_linux_download_base_url,
+                 path.module,
                  var.tectonic_container_linux_channel,
                  var.tectonic_container_linux_version,
                  local.assets_dir)}"
