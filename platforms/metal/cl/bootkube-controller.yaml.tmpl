@@ -28,6 +28,7 @@ systemd:
         RequiredBy=kubelet.service
     - name: k8s-node-bootstrap.service
       enable: true
+      mask: true
       contents: {{.ign_k8s_node_bootstrap_service_json}}
     - name: kubelet.service
       enable: true

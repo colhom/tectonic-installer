@@ -67,6 +67,7 @@ data "template_file" "k8s_node_bootstrap" {
 data "ignition_systemd_unit" "k8s_node_bootstrap" {
   name    = "k8s-node-bootstrap.service"
   enable  = true
+  mask    = true
   content = "${data.template_file.k8s_node_bootstrap.rendered}"
 }
 
