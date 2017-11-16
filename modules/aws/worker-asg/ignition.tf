@@ -11,4 +11,12 @@ data "ignition_config" "main" {
     "${var.ign_kubelet_service_id}",
     "${var.ign_locksmithd_service_id}",
   ]
+
+  append = [{
+    source = "${var.ign_append_config_urls[0]}"
+  },
+    {
+      source = "${var.ign_append_config_urls[1]}"
+    },
+  ]
 }

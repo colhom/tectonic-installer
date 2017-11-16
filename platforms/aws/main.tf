@@ -32,6 +32,17 @@ module "vpc" {
   // empty map subnet_configs will have the vpc module creating subnets in all availabile AZs
   new_master_subnet_configs = "${var.tectonic_aws_master_custom_subnets}"
   new_worker_subnet_configs = "${var.tectonic_aws_worker_custom_subnets}"
+
+  tectonic_s3_bucket = "${local.tectonic_bucket}"
+
+  s3_ign_configs = {
+    "registry-cache-masters" = "${module.ignition_masters.registry_cache_ign_config}"
+    "registry-cache-workers" = "${module.ignition_workers.registry_cache_ign_config}"
+    "custom-cacerts-masters" = "${module.ignition_masters.custom_cacerts_ign_config}"
+    "custom-cacerts-workers" = "${module.ignition_workers.custom_cacerts_ign_config}"
+  }
+
+  offline = "${var.tectonic_aws_offline}"
 }
 
 module "etcd" {
@@ -80,6 +91,14 @@ module "ignition_masters" {
   kubelet_node_label        = "node-role.kubernetes.io/master"
   kubelet_node_taints       = "node-role.kubernetes.io/master=:NoSchedule"
   tectonic_vanilla_k8s      = "${var.tectonic_vanilla_k8s}"
+
+  registry_cache_image_repo           = "${var.tectonic_registry_cache_image_repo}"
+  registry_cache_image_tag            = "${var.tectonic_registry_cache_image_tag}"
+  registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
+  registry_cache_rkt_image_protocol   = "${var.tectonic_registry_cache_rkt_protocol}"
+  rkt_image_protocol                  = "${var.tectonic_rkt_image_protocol}"
+  rkt_insecure_options                = "${var.tectonic_rkt_insecure_options}"
+  custom_cacertificates               = "${var.tectonic_custom_cacertificates}"
 }
 
 module "masters" {
@@ -123,6 +142,11 @@ module "masters" {
   ign_s3_puller_id                  = "${module.ignition_masters.s3_puller_id}"
   ign_tectonic_path_unit_id         = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id           = "${module.tectonic.systemd_service_id}"
+
+  ign_append_config_urls = [
+    "${lookup(module.vpc.ign_config_s3_urls,"custom-cacerts-masters")}",
+    "${lookup(module.vpc.ign_config_s3_urls,"registry-cache-masters")}",
+  ]
 }
 
 module "ignition_workers" {
@@ -138,6 +162,14 @@ module "ignition_workers" {
   kubelet_node_label   = "node-role.kubernetes.io/node"
   kubelet_node_taints  = ""
   tectonic_vanilla_k8s = "${var.tectonic_vanilla_k8s}"
+
+  registry_cache_image_repo           = "${var.tectonic_registry_cache_image_repo}"
+  registry_cache_image_tag            = "${var.tectonic_registry_cache_image_tag}"
+  registry_cache_rkt_insecure_options = "${var.tectonic_registry_cache_rkt_insecure_options}"
+  registry_cache_rkt_image_protocol   = "${var.tectonic_registry_cache_rkt_protocol}"
+  rkt_image_protocol                  = "${var.tectonic_rkt_image_protocol}"
+  rkt_insecure_options                = "${var.tectonic_rkt_insecure_options}"
+  custom_cacertificates               = "${var.tectonic_custom_cacertificates}"
 }
 
 module "workers" {
@@ -168,4 +200,9 @@ module "workers" {
   ign_locksmithd_service_id         = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id           = "${module.ignition_workers.max_user_watches_id}"
   ign_s3_puller_id                  = "${module.ignition_workers.s3_puller_id}"
+
+  ign_append_config_urls = [
+    "${lookup(module.vpc.ign_config_s3_urls,"custom-cacerts-workers")}",
+    "${lookup(module.vpc.ign_config_s3_urls,"registry-cache-workers")}",
+  ]
 }

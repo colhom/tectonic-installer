@@ -343,3 +343,8 @@ Example:
  * `["ingress-nginx"]`
 EOF
 }
+
+variable "tectonic_aws_offline" {
+  description = "enable aws offline mode. if creating a new vpc, no igw or nat gateways will be created. cluster will not have internet access, will pull offline assets directly from s3 via vpc endpoint"
+  default     = false
+}

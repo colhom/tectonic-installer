@@ -50,3 +50,7 @@ variable "new_worker_subnet_configs" {
   type        = "map"
   description = "{az_name = new_subnet_cidr}: Empty map means create new subnets in all availability zones in region with generated cidrs."
 }
+
+variable "offline" {
+  default = false
+}

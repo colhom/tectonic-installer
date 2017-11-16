@@ -146,3 +146,8 @@ variable "ign_tectonic_service_id" {
 variable "ign_tectonic_path_unit_id" {
   type = "string"
 }
+
+variable "ign_append_config_urls" {
+  type    = "list"
+  default = []
+}

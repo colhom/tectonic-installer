@@ -1,3 +1,7 @@
+locals {
+  tectonic_bucket = "${var.tectonic_aws_assets_s3_bucket_name == "" ? format("%s%s-%s", "a", var.tectonic_cluster_name, md5(format("%s-%s", data.aws_region.current.name , var.tectonic_base_domain))) : var.tectonic_aws_assets_s3_bucket_name }"
+}
+
 data "aws_region" "current" {
   current = true
 }
@@ -6,7 +10,7 @@ resource "aws_s3_bucket" "tectonic" {
   # Buckets must start with a lower case name and are limited to 63 characters,
   # so we prepend the letter 'a' and use the md5 hex digest for the case of a long domain
   # leaving 29 chars for the cluster name.
-  bucket = "${var.tectonic_aws_assets_s3_bucket_name == "" ? format("%s%s-%s", "a", var.tectonic_cluster_name, md5(format("%s-%s", data.aws_region.current.name , var.tectonic_base_domain))) : var.tectonic_aws_assets_s3_bucket_name }"
+  bucket = "${local.tectonic_bucket}"
 
   acl = "private"
 

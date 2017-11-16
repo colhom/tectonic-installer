@@ -82,3 +82,8 @@ variable "worker_iam_role" {
 variable "ign_s3_puller_id" {
   type = "string"
 }
+
+variable "ign_append_config_urls" {
+  type    = "list"
+  default = []
+}

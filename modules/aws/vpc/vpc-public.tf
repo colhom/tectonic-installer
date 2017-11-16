@@ -1,5 +1,11 @@
+locals {
+  rtb_count    = "${local.external_vpc_mode ? 0 : 1}"
+  igw_count    = "${var.offline ? 0 : local.rtb_count }"
+  nat_gw_count = "${var.offline ? 0 : min(local.new_master_az_count,local.new_worker_az_count)}"
+}
+
 resource "aws_internet_gateway" "igw" {
-  count  = "${local.external_vpc_mode ? 0 : 1}"
+  count  = "${local.igw_count}"
   vpc_id = "${data.aws_vpc.cluster_vpc.id}"
 
   tags = "${merge(map(
@@ -10,7 +16,7 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_route_table" "default" {
-  count  = "${local.external_vpc_mode ? 0 : 1}"
+  count  = "${local.rtb_count}"
   vpc_id = "${data.aws_vpc.cluster_vpc.id}"
 
   tags = "${merge(map(
@@ -21,13 +27,13 @@ resource "aws_route_table" "default" {
 }
 
 resource "aws_main_route_table_association" "main_vpc_routes" {
-  count          = "${local.external_vpc_mode ? 0 : 1}"
+  count          = "${local.rtb_count}"
   vpc_id         = "${data.aws_vpc.cluster_vpc.id}"
   route_table_id = "${aws_route_table.default.id}"
 }
 
 resource "aws_route" "igw_route" {
-  count                  = "${local.external_vpc_mode ? 0 : 1}"
+  count                  = "${local.igw_count}"
   destination_cidr_block = "0.0.0.0/0"
   route_table_id         = "${aws_route_table.default.id}"
   gateway_id             = "${aws_internet_gateway.igw.id}"
@@ -59,7 +65,7 @@ resource "aws_route_table_association" "route_net" {
 }
 
 resource "aws_eip" "nat_eip" {
-  count = "${min(local.new_master_az_count,local.new_worker_az_count)}"
+  count = "${local.nat_gw_count}"
   vpc   = true
 
   # Terraform does not declare an explicit dependency towards the internet gateway.
@@ -69,7 +75,7 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_nat_gateway" "nat_gw" {
-  count         = "${min(local.new_master_az_count,local.new_worker_az_count)}"
+  count         = "${local.nat_gw_count}"
   allocation_id = "${aws_eip.nat_eip.*.id[count.index]}"
   subnet_id     = "${aws_subnet.master_subnet.*.id[count.index]}"
 }
