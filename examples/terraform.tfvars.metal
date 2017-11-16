@@ -46,6 +46,18 @@ tectonic_cluster_name = ""
 // Examples: `latest`, `1465.6.0`
 tectonic_container_linux_version = "latest"
 
+// List of paths to SSL CA Certificates you would like trusted on Kubernetes nodes, in PEM-encoded x509 format.
+// 
+// These certificates will be added to the root of trust on both master and worker nodes via the update-cacertificates-rehash systemd service enabled on every boot.
+// 
+// Example:
+// tectonic_custom_cacertificates = [
+//   "~/fake-ssl/authority1.crt",
+//   "~/fake-ssl/authority2.crt",
+//   "~/fake-ssl/authority3.crt"
+// ]
+tectonic_custom_cacertificates = ""
+
 // (optional) This only applies if you use the modules/dns/ddns module.
 // 
 // Specifies the RFC2136 Dynamic DNS server key algorithm.
@@ -143,10 +155,27 @@ tectonic_metal_controller_macs = ""
 // Example: `["node1"]`
 tectonic_metal_controller_names = ""
 
+// DNS Server IP Address
+tectonic_metal_dnsserver = ""
+
 // The domain name which resolves to Tectonic Ingress (i.e. worker node(s))
 // 
 // Example: `tectonic.example.com`
 tectonic_metal_ingress_domain = ""
+
+// Metal Master Gateway IP Address
+tectonic_metal_master_gateway = ""
+
+// Metal Master IP Address
+// 
+// Example: `tectonic_metal_master_ip = {
+//   "0" = "192.168.2.71/24"
+//   "1" = "192.168.2.72/24"
+// }`
+tectonic_metal_master_ip = ""
+
+// networkd 'Name' match string ex: eno2. Leave blank to match interface by provided mac address
+tectonic_metal_master_networkadapter = ""
 
 // The content of the Matchbox CA certificate to trust.
 // 
@@ -206,6 +235,17 @@ tectonic_metal_matchbox_rpc_endpoint = ""
 // Example: `["node2.example.com", "node3.example.com"]`
 tectonic_metal_worker_domains = ""
 
+// Metal Master Gateway IP Address
+tectonic_metal_worker_gateway = ""
+
+// Metal Worker IP Address
+// 
+// Example: `tectonic_metal_worker_ip = {
+//   "0" = "192.168.2.71/24"
+//   "1" = "192.168.2.72/24"
+// }`
+tectonic_metal_worker_ip = ""
+
 // Ordered list of worker MAC addresses for matching machines.
 // 
 // Example: `["52:54:00:b2:2f:86", "52:54:00:c3:61:77"]`
@@ -215,6 +255,9 @@ tectonic_metal_worker_macs = ""
 // 
 // Example: `["node2", "node3"]`
 tectonic_metal_worker_names = ""
+
+// networkd 'Name' match string ex: eno2. Leave blank to match interface by provided mac address.
+tectonic_metal_worker_networkadapter = ""
 
 // (optional) Configures the network to be used in Tectonic. One of the following values can be used:
 // 
@@ -239,6 +282,27 @@ tectonic_metal_worker_names = ""
 // Note: This field MUST be set manually prior to creating the cluster unless `tectonic_vanilla_k8s` is set to `true`.
 tectonic_pull_secret_path = ""
 
+// (offline) image repo to pull tectonic registry cache image from
+tectonic_registry_cache_image_repo = ""
+
+// (offline) image tag for tectonic registry cache image (empty string unless tectonic_registry_cache_rkt_protocol = "docker://")
+tectonic_registry_cache_image_tag = ""
+
+// (offline) rkt insecure options to set when pulling tectonic registry cache image.
+tectonic_registry_cache_rkt_insecure_options = ""
+
+// (offline) rkt image protocol string to pull tectonic registry cache image.
+tectonic_registry_cache_rkt_protocol = ""
+
+// (offline) Protocol rkt will use when pulling images from registry.
+// 
+// Example: `docker://`
+tectonic_rkt_image_protocol = ""
+
+// (offline) Comma-separated list of insecure options for rkt.
+// Example: `image,tls`
+tectonic_rkt_insecure_options = ""
+
 // (optional) This declares the IP range to assign Kubernetes service cluster IPs in CIDR notation.
 // The maximum size of this IP range is /12
 // tectonic_service_cidr = "10.3.0.0/16"
@@ -247,6 +311,9 @@ tectonic_pull_secret_path = ""
 // 
 // Example: `ssh-rsa AAAB3N...`
 tectonic_ssh_authorized_key = ""
+
+// configure static ip for nodes (any value other than empty string)
+tectonic_static_ip = ""
 
 // If set to true, a vanilla Kubernetes cluster will be deployed, omitting any Tectonic assets.
 tectonic_vanilla_k8s = false
