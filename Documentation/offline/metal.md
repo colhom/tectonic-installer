@@ -35,9 +35,29 @@ This installation procedure allows for Tectonic installation in an environment w
 
 #### Step 2:
 
-  At this juncture, we will pre-populate the Matchbox assets folder. (Or optionally, HTTP/HTTPS fileservers of your choice. More on that shortly)
+  At this juncture, we will pre-populate the Matchbox assets folder. (Or optionally, HTTP/HTTPS fileservers of your choice. More on that shortly).
 
-  The machine hosting terraform will **need internet access** to apply the `matchbox-assets` terraform module. It will download the Container Linux OS assets and Tectonic Registry Cache ACI from our public mirrors and write a matchbox asset tarball out to local disk, along with a printout of asset URLs and a default terraform tfvar snippet to configure the terraform installer for offline duty.
+  In this installation flow we will use the `matchbox-assets` module to build the assets tarball for us. You can populate the matchbox assets directory in an entirely different way, if so desired.
+
+  You can apply this module in either online or offline mode:
+
+  * Online mode: Module will download the Container Linux OS assets and Tectonic Registry Cache ACI from our public mirrors and write a matchbox asset tarball out to local disk. Requires internet access when module is applied.
+
+    ```sh
+    $> make matchbox-assets-apply
+    ```
+
+  * Offline mode: This mode assumes that you have already mirrored the necessary asset files to a file server accessible from within your network before applying the `matchbox-assets` module.
+
+    ```sh
+    $> TF_VAR_container_linux_download_base_url="https://fileserver1.my-network.io/cl/stable/1520.8.0" \
+    TF_VAR_registry_cache_aci_url="https://fileserver1.my-network.io/registry-cache/1.7.9_tectonic.1/registry-cache.aci" \
+    make matchbox-assets-apply
+    ```
+
+  In both modes, the module will output asset URLs and a default "suggested" terraform tfvar snippet to configure the terraform installer for offline duty using these assets.
+
+  If you **will not** being using matchbox HTTP to host the assets, carefully review the suggested tfvar snippet before configuring the installer offline parameters. The generated asset URLs assume you will use matchbox HTTP to host assets for the Container Linux node installation.
 
   The asset tarball written to disk by this `matchbox-assets` terraform module is the entirety of the foreign bytes required for a Tectonic offline install- no further egress is required.
 
