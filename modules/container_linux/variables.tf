@@ -8,7 +8,7 @@ Examples: `stable`, `beta`, `alpha`
 EOF
 }
 
-variable "version" {
+variable "cl_version" {
   type = "string"
 
   description = <<EOF

@@ -1,3 +1,3 @@
 output "version" {
-  value = "${var.version == "latest" ? data.external.version.result["version"] : var.version}"
+  value = "${var.cl_version == "latest" ? data.external.version.result["version"] : var.cl_version}"
 }

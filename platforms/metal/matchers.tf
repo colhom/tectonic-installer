@@ -1,8 +1,8 @@
 module "container_linux" {
   source = "../../modules/container_linux"
 
-  channel = "${var.tectonic_container_linux_channel}"
-  version = "${var.tectonic_container_linux_version}"
+  channel    = "${var.tectonic_container_linux_channel}"
+  cl_version = "${var.tectonic_container_linux_version}"
 }
 
 // Install CoreOS to disk
