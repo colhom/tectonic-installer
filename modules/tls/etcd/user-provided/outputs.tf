@@ -35,7 +35,7 @@ output "etcd_tls_zip" {
 output "id" {
   value = "${sha1("
   ${data.archive_file.etcd_tls_zip.id},
-  ${join(" ",
+  ${join(" ",concat(
     local_file.etcd_ca_crt.*.id,
     local_file.etcd_server_crt.*.id,
     local_file.etcd_server_key.*.id,
@@ -43,6 +43,6 @@ output "id" {
     local_file.etcd_client_key.*.id,
     local_file.etcd_peer_crt.*.id,
     local_file.etcd_peer_key.*.id,
-    )}
+    ))}
   ")}"
 }

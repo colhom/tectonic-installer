@@ -28,13 +28,13 @@ output "apiserver_key_pem" {
 
 output "id" {
   value = "${sha1("
-  ${join(" ",
+  ${join(" ",list(
     local_file.apiserver_key.id,
     local_file.apiserver_crt.id,
     local_file.kube_ca_key.id,
     local_file.kube_ca_crt.id,
     local_file.kubelet_key.id,
     local_file.kubelet_crt.id,
-    )}
+    ))}
   ")}"
 }
