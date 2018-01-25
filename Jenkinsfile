@@ -129,6 +129,16 @@ pipeline {
       defaultValue: true,
       description: ''
     )
+    string(
+      name : 'ghOrg',
+      defaultValue: 'coreos',
+      description: 'Github organization'
+    )
+    string(
+      name: 'ghRepo',
+      defaultValue: 'tectonic-installer',
+      description: 'Github repo'
+    )
   }
 
   stages {
@@ -525,7 +535,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
 def reportStatusToGithub(status, context, commitId) {
   withCredentials(creds) {
     sh """#!/bin/bash -ex
-      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
+      GH_ORG=\${ghOrg} GH_REPO=\${ghRepo} ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId}
     """
   }
 }
