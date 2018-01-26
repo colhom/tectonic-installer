@@ -63,7 +63,6 @@ pipeline {
   agent none
   environment {
     KUBE_CONFORMANCE_IMAGE = 'quay.io/coreos/kube-conformance:v1.8.4_coreos.0'
-    LOGSTASH_BUCKET = 'log-analyzer-tectonic-installer'
   }
   options {
     // Individual steps have stricter timeouts. 360 minutes should be never reached.
@@ -101,6 +100,11 @@ pipeline {
       name: 'COMPONENT_TEST_IMAGES',
       defaultValue: '',
       description: 'List of container images for component tests to run (comma-separated)'
+    )
+    string(
+      name: 'LOGSTASH_BUCKET',
+      defaultValue: 'log-analyzer-tectonic-installer',
+      description: 's3 bucket name to sync jenkins log files into'
     )
     booleanParam(
       name: 'PLATFORM/AWS',
