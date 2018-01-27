@@ -12,6 +12,8 @@ require 'tfstate_file'
 require 'tfvars_file'
 require 'timeout'
 require 'with_retries'
+require 'open3'
+require 'base64'
 
 # Cluster represents a k8s cluster
 class Cluster
@@ -26,6 +28,7 @@ class Cluster
     @name = ENV['CLUSTER'] || NameGenerator.generate(@tfvars_file.prefix)
     @tectonic_admin_email = ENV['TF_VAR_tectonic_admin_email'] || NameGenerator.generate_fake_email
     @tectonic_admin_password = ENV['TF_VAR_tectonic_admin_password'] || PasswordGenerator.generate_password
+    save_console_creds(@name, @tectonic_admin_email, @tectonic_admin_password)
 
     @build_path = File.join(File.realpath('../../'), "build/#{@name}")
     @manifest_path = File.join(@build_path, 'generated')
@@ -35,11 +38,11 @@ class Cluster
     check_prerequisites
   end
 
-  def plan
-    3.times do
-      return if system(env_variables, 'make -C ../.. plan')
-    end
-    raise 'Planning cluster failed after 3 tries'
+  def plan(terraform_options = nil)
+    env = env_variables
+    env['TF_PLAN_OPTIONS'] = terraform_options unless terraform_options.nil?
+    stdout, stderr, exit_status = Open3.capture3(env, 'make -C ../.. plan')
+    [stdout, stderr, exit_status]
   end
 
   def start
@@ -51,6 +54,10 @@ class Cluster
     start
   end
 
+  def init
+    terraform_init
+  end
+
   def stop
     if ENV.key?('TECTONIC_TESTS_DONT_CLEAN_UP')
       puts "*** Cleanup inhibiting flag set. Stopping here. ***\n"
@@ -59,7 +66,6 @@ class Cluster
       return
     end
     destroy
-    clean if Jenkins.environment?
   end
 
   def check_prerequisites
@@ -118,6 +124,43 @@ class Cluster
       .map { |pod| [pod[0], nodes[pod[1]]] }.to_h
   end
 
+  def forensic(events = true)
+    outputs_console_logs = machine_boot_console_logs
+    outputs_console_logs.each do |ip, log|
+      puts "saving boot logs from master-#{ip}"
+      decoded_base64_content = Base64.decode64(log)
+      save_to_file(@name, 'console_machine', ip, 'console_machine', decoded_base64_content)
+    end
+
+    save_kubernetes_events(@kubeconfig, @name) if events
+
+    master_ip_addresses.each do |master_ip|
+      save_docker_logs(master_ip, @name)
+
+      ['bootkube', 'tectonic', 'kubelet', 'k8s-node-bootstrap'].each do |service|
+        print_service_logs(master_ip, service, @name)
+      end
+    end
+
+    worker_ip_addresses.each do |worker_ip|
+      save_docker_logs(worker_ip, @name, master_ip_address)
+
+      ['kubelet'].each do |service|
+        print_service_logs(worker_ip, service, @name, master_ip_address)
+      end
+    end
+
+    etcd_ip_addresses.each do |etcd_ip|
+      ['etcd-member'].each do |service|
+        print_service_logs(etcd_ip, service, @name, master_ip_address)
+      end
+    end
+  end
+
+  def machine_boot_console_logs
+    { '0.0.0.0' => "not implemented yet for platform #{env_variables['PLATFORM']}" }
+  end
+
   private
 
   def license_and_pull_secret_defined?
@@ -129,21 +172,26 @@ class Cluster
 
   def apply
     ::Timeout.timeout(30 * 60) do # 30 minutes
-      3.times do |idx|
+      3.times do
         env = env_variables
-        env['TF_LOG'] = 'TRACE' if idx.positive?
-        return true if system(env, 'make -C ../.. apply')
+        env['TF_APPLY_OPTIONS'] = '-no-color'
+        env['TF_INIT_OPTIONS'] = '-no-color'
+
+        return run_command(env, 'apply')
       end
     end
+  rescue Timeout::Error
+    forensic(false)
     raise 'Applying cluster failed'
   end
 
   def destroy
     ::Timeout.timeout(30 * 60) do # 30 minutes
-      3.times do |idx|
+      3.times do
         env = env_variables
-        env['TF_LOG'] = 'TRACE' if idx.positive?
-        return true if system(env, 'make -C ../.. destroy')
+        env['TF_DESTROY_OPTIONS'] = '-no-color'
+        env['TF_INIT_OPTIONS'] = '-no-color'
+        return run_command(env, 'destroy')
       end
     end
 
@@ -154,12 +202,33 @@ class Cluster
     raise e
   end
 
-  def recover_from_failed_destroy() end
-
-  def clean
-    succeeded = system(env_variables, 'make -C ../.. clean')
-    raise 'could not clean build directory' unless succeeded
+  def terraform_init
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      env = env_variables
+      env['TF_INIT_OPTIONS'] = '-no-color'
+      return run_command(env, 'init')
+    end
+  rescue Timeout::Error
+    forensic(false)
+    raise 'Terraform init failed'
   end
+
+  def run_command(env, cmd)
+    Open3.popen3(env, "bash -co pipefail 'make -C ../.. #{cmd} |
+                    tee ../../build/#{@name}/terraform-#{cmd}.log'") do |_stdin, stdout, stderr, wait_thr|
+      while (line = stdout.gets)
+        puts line
+      end
+      while (line = stderr.gets)
+        puts line
+      end
+      exit_status = wait_thr.value
+      return exit_status.success?
+    end
+    false
+  end
+
+  def recover_from_failed_destroy() end
 
   def wait_til_ready
     wait_for_bootstrapping
@@ -208,40 +277,35 @@ class Cluster
 
   def wait_for_bootstrapping
     ips = master_ip_addresses
+    raise 'Empty master ips. Aborting...' if ips.empty?
     wait_for_service('bootkube', ips)
     wait_for_service('tectonic', ips)
     puts 'HOORAY! The cluster is up'
-  rescue => e
-    ips.each do |master_ip|
-      save_docker_logs(master_ip, @name)
-
-      ['bootkube', 'tectonic', 'kubelet', 'k8s-node-bootstrap'].each do |service|
-        print_service_logs(master_ip, service, @name)
-      end
-    end
-    raise "Error in wait_for_bootstrapping: #{e}"
   end
 
   def wait_for_service(service, ips)
     from = Time.now
 
-    180.times do # 180 * 10 = 1800 seconds = 30 minutes
-      return if service_finished_bootstrapping?(ips, service)
+    ::Timeout.timeout(30 * 60) do # 30 minutes
+      loop do
+        return if service_finished_bootstrapping?(ips, service)
 
-      elapsed = Time.now - from
-      if (elapsed.round % 5).zero?
-        puts "Waiting for bootstrapping of #{service} service to complete..."
-        puts "Checked master nodes: #{ips}"
+        elapsed = Time.now - from
+        if (elapsed.round % 5).zero?
+          puts "Waiting for bootstrapping of #{service} service to complete..."
+          puts "Checked master nodes: #{ips}"
+        end
+        sleep 10
       end
-      sleep 10
     end
-
+  rescue Timeout::Error
+    puts 'Trying to collecting the logs...'
+    forensic(false) # Call forensic to collect logs when service timeout
     raise "timeout waiting for #{service} service to bootstrap on any of: #{ips}"
   end
 
   def service_finished_bootstrapping?(ips, service)
     command = "test -e /opt/tectonic/init_#{service}.done"
-
     ips.each do |ip|
       finished = 1
       begin
@@ -255,7 +319,6 @@ class Cluster
         return true
       end
     end
-
     false
   end
 
