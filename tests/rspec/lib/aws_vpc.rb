@@ -48,9 +48,17 @@ class AWSVPC
     Dir.chdir('../../contrib/internal-cluster') do
       succeeded = system(env_variables, 'terraform init')
       raise 'could not init Terraform to create VPC' unless succeeded
-      succeeded = system(env_variables, 'terraform apply -auto-approve')
-      raise 'could not create vpc with Terraform' unless succeeded
-
+      applied = false
+      ::Timeout.timeout(30 * 60) do # 30 minutes
+        3.times do
+          succeeded = system(env_variables, 'terraform apply -auto-approve')
+          if succeeded
+            applied = true
+            break
+          end
+        end
+      end
+      raise 'could not apply vpc with Terraform' unless applied
       parse_terraform_output
       wait_for_vpn_access_server
 
