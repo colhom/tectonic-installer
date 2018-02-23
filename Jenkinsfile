@@ -162,7 +162,7 @@ pipeline {
       description: 'S3 bucket target for logs, to be consumed by Logstash. Leave empty to skip uploading logs.'
     )
     string(
-      name : 'github_repo',
+      name : 'GITHUB_REPO',
       defaultValue: 'coreos/tectonic-installer',
       description: 'Github repository'
     )
@@ -171,7 +171,7 @@ pipeline {
   stages {
     stage('Build & Test') {
       environment {
-        GO_PROJECT = "/go/src/github.com/${params.github_repo}"
+        GO_PROJECT = "/go/src/github.com/${params.GITHUB_REPO}"
         MAKEFLAGS = '-j4'
       }
       steps {
@@ -566,7 +566,7 @@ def runRSpecTestBareMetal(testFilePath, credentials) {
 def reportStatusToGithub(status, context, commitId) {
   withCredentials(creds) {
     sh """#!/bin/bash -ex
-      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId} ${params.github_repo}
+      ./tests/jenkins-jobs/scripts/report-status-to-github.sh ${status} ${context} ${commitId} ${params.GITHUB_REPO}
     """
   }
 }
