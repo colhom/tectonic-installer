@@ -129,7 +129,7 @@ case "${action}" in
     ;;
 
   "jenkins-logs")
-    curl -u  "${LOG_ANALYZER_USER}:${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}consoleText" >> "${jenkins_filename}"
+    curl -k -u  "${LOG_ANALYZER_USER}:${LOG_ANALYZER_PASSWORD}" "${BUILD_URL}consoleText" >> "${jenkins_filename}"
     ;;
 esac
 
