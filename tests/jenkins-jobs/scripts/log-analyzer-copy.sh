@@ -105,21 +105,21 @@ case "${action}" in
     logfiles_found="false"
 
     # Old _terraform_ workflow copies logs to `build/<cluster_name>/*.log`
-    if compgen -G ../bazel-bin/tectonic/build/*/*.log >/dev/null ; then
+    if compgen -G ../tectonic/build/*/*.log >/dev/null ; then
         # Note: only 1 sub-dir under build/ is expected. If the glob were to
         # match >1 files with the same name in different build/* dirs, then cp
         # is smart enough to exit with an error.
         logfiles_found="true"
-        cp ../bazel-bin/tectonic/build/*/*.log .
+        mv ../tectonic/build/*/*.log .
     fi
 
     # New _Tectonic CLI_ workflow copies logs to `<cluster_name>/*.log`
-    if compgen -G ../bazel-bin/tectonic/*/*.log >/dev/null ; then
+    if compgen -G ../tectonic/*/*.log >/dev/null ; then
         # Note: only 1 sub-dir under */ is expected. If the glob were to match
         # >1 files with the same name in different build/* dirs, then cp is
         # smart enough to exit with an error.
         logfiles_found="true"
-        cp ../bazel-bin/tectonic/*/*.log .
+        mv ../tectonic/*/*.log .
     fi
 
     if [ "${logfiles_found}" = "false" ]; then
