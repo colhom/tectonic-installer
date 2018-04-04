@@ -8,6 +8,7 @@ class TestContainer
     @image = image
     @cluster = cluster
     @vpn_tunnel = vpn_tunnel
+    @logfile = File.join(cluster.build_path, image.tr('/', '_').tr(':', '_') + '.log')
   end
 
   def run
@@ -16,11 +17,12 @@ class TestContainer
                   "sudo rkt fetch --insecure-options=image #{@image}; \
                   sudo rkt run --volume kubecfg,kind=host,readOnly=false,source=#{@cluster.kubeconfig} \
                   --mount volume=kubecfg,target=/kubeconfig #{network_config} --dns=host \
-                  #{container_env('rkt')} --insecure-options=image #{@image}"
+                  #{container_env('rkt')} --insecure-options=image #{@image} | tee #{@logfile}"
                 else
                   "docker pull #{@image}; \
                   docker run -v #{@cluster.kubeconfig}:/kubeconfig \
-                  #{network_config} #{container_env('docker')} #{@image}"
+                  #{network_config} #{container_env('docker')} #{@image} \
+                  | tee #{@logfile}"
                 end
 
       login_quay unless @cluster.env_variables['PLATFORM'].include?('metal')
