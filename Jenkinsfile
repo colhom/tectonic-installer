@@ -45,6 +45,11 @@ quayCreds = [
     credentialsId: 'quay-robot',
     passwordVariable: 'QUAY_ROBOT_SECRET',
     usernameVariable: 'QUAY_ROBOT_USERNAME'
+  ),
+  usernamePassword(
+    credentialsId: 'quay-pullbot',
+    passwordVariable: 'QUAY_PULLBOT_SECRET',
+    usernameVariable: 'QUAY_PULLBOT_USERNAME'
   )
 ]
 
