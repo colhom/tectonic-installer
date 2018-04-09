@@ -71,7 +71,7 @@ class TestContainer
   end
 
   def login_quay
-    command = "docker login -u=#{ENV['QUAY_ROBOT_USERNAME']} -p=#{ENV['QUAY_ROBOT_SECRET']} quay.io"
+    command = "docker login -u=#{ENV['QUAY_PULLBOT_USERNAME']} -p=#{ENV['QUAY_PULLBOT_SECRET']} quay.io"
     succeeded = system(command)
     raise 'Error to login to QUAY.IO' unless succeeded
   end
